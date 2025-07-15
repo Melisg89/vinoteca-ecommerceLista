@@ -2,8 +2,8 @@ package com.tequila.ecommerce.vinoteca.controllers;
 
 import com.tequila.ecommerce.vinoteca.models.Product;
 import com.tequila.ecommerce.vinoteca.services.ProductServices;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping ("/api/products")
+@RequestMapping("/api/products")
 @Validated
 public class ProductController {
 
@@ -72,4 +72,3 @@ public class ProductController {
         }
     }
 }
-

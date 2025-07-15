@@ -1,22 +1,23 @@
 package com.tequila.ecommerce.vinoteca.models;
 
-import jakarta.persistence.*;
-
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "users")//name de la tabla en la  base de datos
-
+@Table(name = "users") // nombre de la tabla en la base de datos
 public class User {
 
     @Id // Marca este campo como la clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY) // El valor de este campo se generará automáticamente
     @Column(name = "id")
     private Long id;
+
     @Column(name = "nombre") // nombre de la columna en la base de datos
     private String name;
+
     @Column(name = "email") // nombre de la columna en la base de datos
     private String email;
+
     @Column(name = "password") // nombre de la columna en la base de datos
     private String password;
 

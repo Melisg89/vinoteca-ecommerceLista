@@ -1,6 +1,6 @@
 package com.tequila.ecommerce.vinoteca.models;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity

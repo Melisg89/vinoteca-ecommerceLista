@@ -1,13 +1,12 @@
 package com.tequila.ecommerce.vinoteca.models;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "orders") // Nombre más descriptivo para la tabla
 public class Order {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,6 +66,7 @@ public class Order {
     public void setUser(User user) {
         this.user = user;
     }
+
     public String getEstado() {
         return estado;
     }
