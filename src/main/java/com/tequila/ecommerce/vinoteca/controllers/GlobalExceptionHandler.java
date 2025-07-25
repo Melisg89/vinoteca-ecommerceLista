@@ -1,6 +1,6 @@
 package com.tequila.ecommerce.vinoteca.controllers;
 
-import javax.persistence.EntityNotFoundException;  // Cambiado de jakarta a javax
+import jakarta.persistence.EntityNotFoundException; // Para manejar errores si no se encuentra una entidad
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,7 +18,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException e) {
-        return new ResponseEntity<>(e.getBindingResult().getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
+        String errorMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)

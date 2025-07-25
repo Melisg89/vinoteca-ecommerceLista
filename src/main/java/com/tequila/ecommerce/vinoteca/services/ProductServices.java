@@ -11,23 +11,25 @@ import java.util.List;
 public class ProductServices {
 
     @Autowired
-    private ProductRepository productoRepository;
-
-
+    private ProductRepository productRepository;
 
     public List<Product> obtenerTodosLosProductos() {
-        return productoRepository.findAll();
+        return productRepository.findAll();
     }
 
     public Product obtenerProductoPorId(Long id) {
-        return productoRepository.findById(id).orElse(null);
+        return productRepository.findById(id).orElse(null);
+    }
+
+    public List<Product> obtenerProductosPorIds(List<Long> ids) {
+        return productRepository.findAllById(ids);
     }
 
     public Product guardarProducto(Product producto) {
-        return productoRepository.save(producto);
+        return productRepository.save(producto);
     }
 
     public void eliminarProducto(Long id) {
-        productoRepository.deleteById(id);
+        productRepository.deleteById(id);
     }
 }

@@ -18,18 +18,24 @@ public class UserService {
     public List<User> obtenerTodosLosUsuarios() {
         return userRepository.findAll();
     }
+
     @Transactional(readOnly = true)
     public User obtenerUsuarioPorId(Long id) {
         return userRepository.findById(id).orElse(null);
     }
+
     @Transactional
     public User guardarUsuario(User usuario) {
         return userRepository.save(usuario);
     }
+
     @Transactional
     public void eliminarUsuario(Long id) {
         userRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
+    public User encontrarPorEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
-

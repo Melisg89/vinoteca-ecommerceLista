@@ -40,9 +40,7 @@
 				    			<a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-dribbble"><i class="sr-only">Dribbble</i></span></a>
 				    		</p>
 			        </div>
-			        <div class="reg">
-			        	<p class="mb-0"><a href="#" class="mr-2">Ingresar</a> <a href="#">Registrarse</a></p>
-			        </div>
+			        
 						</div>
 					</div>
 				</div>
@@ -97,8 +95,8 @@
 		               <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Productos</a>
 		               <div class="dropdown-menu" aria-labelledby="dropdown04">
 		               	<a class="dropdown-item" href="product.html">Productos</a>
-		                 <a class="dropdown-item" href="product-single.html">Productos individuales</a>
-		                 <a class="dropdown-item" href="cart.html">Carta</a>
+		                 <a class="dropdown-item" href="product-single.html">Producto Destacado</a>
+		                 <a class="dropdown-item" href="cart.html">Carrito</a>
 		                 <a class="dropdown-item" href="checkout.html">Verificar</a>
 		               </div>
 		             </li>
@@ -110,163 +108,236 @@
 		    </nav>
     <!-- END nav -->
     
-    <section class="hero-wrap hero-wrap-2" style="background-image: url('images/bg_2.jpg');" data-stellar-background-ratio="0.5">
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row no-gutters slider-text align-items-end justify-content-center">
-          <div class="col-md-9 ftco-animate mb-5 text-center">
-          	<p class="breadcrumbs mb-0"><span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> <span>Checkout <i class="fa fa-chevron-right"></i></span></p>
-            <h2 class="mb-0 bread">Verificar compra</h2>
+<section class="hero-wrap hero-wrap-2" style="background-image: url('images/bg_2.jpg');" data-stellar-background-ratio="0.5"> 
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text align-items-end justify-content-center">
+      <div class="col-md-9 ftco-animate mb-5 text-center">
+      	<p class="breadcrumbs mb-0">
+          <span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> 
+          <span>Checkout <i class="fa fa-chevron-right"></i></span>
+        </p>
+        <h2 class="mb-0 bread">Verificar compra</h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ftco-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-10 ftco-animate">
+        <form id="checkout-form" class="billing-form">
+          <h3 class="mb-4 billing-heading">Detalles de facturación</h3>
+
+          <div class="row align-items-end">
+            <!-- Nombre -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="firstname">Nombre:</label>
+                <input type="text" id="firstname" name="firstname" class="form-control" placeholder="Nombre" required />
+              </div>
+            </div>
+
+            <!-- Apellido -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="lastname">Apellido:</label>
+                <input type="text" id="lastname" name="lastname" class="form-control" placeholder="Apellido" required />
+              </div>
+            </div>
+
+            <div class="w-100"></div>
+
+            <!-- Departamento -->
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="department">Departamento:</label>
+                <select id="department" name="department" class="form-control" required>
+                  <option value="">Seleccione departamento</option>
+                  <option value="Gran Ciudad">Gran Ciudad</option>
+                  <option value="Guaymallén">Guaymallén</option>
+                  <option value="Godoy Cruz">Godoy Cruz</option>
+                  <option value="Maipú">Maipú</option>
+                  <option value="Las Heras">Las Heras</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="w-100"></div>
+
+            <!-- Dirección -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="streetaddress">Dirección:</label>
+                <input type="text" id="streetaddress" name="streetaddress" class="form-control" placeholder="Número de casa y calle" required />
+              </div>
+            </div>
+
+            <!-- Apartamento -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <input type="text" id="apartment" name="apartment" class="form-control" placeholder="Apartamento, suite, unidad, etc. (opcional)" />
+              </div>
+            </div>
+
+            <!-- Código Postal -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="postcodezip">Código Postal:</label>
+                <input type="text" id="postcodezip" name="postcodezip" class="form-control" placeholder="Código Postal" required />
+              </div>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="phone">Teléfono:</label>
+                <input type="tel" id="phone" name="phone" class="form-control" placeholder="Teléfono" required />
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="emailaddress">Email:</label>
+                <input type="email" id="emailaddress" name="emailaddress" class="form-control" placeholder="Email" required />
+              </div>
+            </div>
+
+            <!-- Checkbox términos -->
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="aceptaTerminos" class="mr-2" />
+                    He leído y acepto los términos y condiciones
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botón finalizar compra -->
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-primary">Finalizar Compra</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Resumen de la compra -->
+    <div class="row mt-5 pt-3 d-flex">
+      <div class="col-md-6 d-flex">
+        <div class="cart-detail cart-total p-3 p-md-4">
+          <h3 class="billing-heading mb-4">TOTAL de la compra</h3>
+          <p class="d-flex">
+            <span>Subtotal</span>
+            <span id="subtotal">$0.00</span>
+          </p>
+          <p class="d-flex">
+            <span>Delivery</span>
+            <span>$0.00</span>
+          </p>
+          <p class="d-flex">
+            <span>Descuento</span>
+            <span id="descuento">-$0.00</span>
+          </p>
+          <hr />
+          <p class="d-flex total-price">
+            <span>Total</span>
+            <span id="total">$0.00</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="cart-detail p-3 p-md-4">
+          <h3 class="billing-heading mb-4">Método de Pago</h3>
+          <div class="form-group">
+            <div class="col-md-12">
+              <div class="radio">
+                <label><input type="radio" name="paymentMethod" class="mr-2" /> Transferencia bancaria directa</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-12">
+              <div class="radio">
+                <label><input type="radio" name="paymentMethod" class="mr-2" /> Pago en Efectivo</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-12">
+              <div class="radio">
+                <label><input type="radio" name="paymentMethod" class="mr-2" /> Mercado Pago</label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section class="ftco-section">
-    	<div class="container">
-    		<div class="row justify-content-center">
-          <div class="col-xl-10 ftco-animate">
-						<form action="#" class="billing-form">
-							<h3 class="mb-4 billing-heading">Detalles de facturación</h3>
-	          	<div class="row align-items-end">
-	          		<div class="col-md-6">
-	                <div class="form-group">
-	                	<label for="firstname">Nombre: </label>
-	                  <input type="text" class="form-control" placeholder="">
-	                </div>
-	              </div>
-	              <div class="col-md-6">
-	                <div class="form-group">
-	                	<label for="lastname">Apellido:</label>
-	                  <input type="text" class="form-control" placeholder="">
-	                </div>
-                </div>
-                <div class="w-100"></div>
-		            <div class="col-md-12">
-		            	<div class="form-group">
-		            		<label for="country">Departamento</label>
-		            		<div class="select-wrap">
-		                  <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-		                  <select name="" id="" class="form-control">
-		                  	<option value="">Gran Ciudad</option>
-		                    <option value="">Guaymallen</option>
-		                    <option value="">Godoy Cruz</option>
-		                    <option value="">Maipu</option>
-		                    <option value="">Las Heras</option>
-		                   
-		                  </select>
-		                </div>
-		            	</div>
-		            </div>
-		            <div class="w-100"></div>
-		            <div class="col-md-6">
-		            	<div class="form-group">
-	                	<label for="streetaddress">Dirección</label>
-	                  <input type="text" class="form-control" placeholder="Número de casa y nombre de la calle">
-	                </div>
-		            </div>
-		            <div class="col-md-6">
-		            	<div class="form-group">
-	                  <input type="text" class="form-control" placeholder="Apartamento, suite, unidad, etc.: (opcional)">
-	                </div>
-		            </div>
-		            
-		            <div class="col-md-6">
-		            	<div class="form-group">
-		            		<label for="postcodezip">Codigo Postal *</label>
-	                  <input type="text" class="form-control" placeholder="">
-	                </div>
-		            </div>
-		            <div class="w-100"></div>
-		            <div class="col-md-6">
-	                <div class="form-group">
-	                	<label for="phone">Telefono</label>
-	                  <input type="text" class="form-control" placeholder="">
-	                </div>
-	              </div>
-	              <div class="col-md-6">
-	                <div class="form-group">
-	                	<label for="emailaddress">Direccion de email</label>
-	                  <input type="text" class="form-control" placeholder="">
-	                </div>
-                </div>
-                <div class="w-100"></div>
-                <div class="col-md-12">
-                	<div class="form-group mt-4">
-										<div class="radio">
-										  <label class="mr-3"><input type="radio" name="optradio">¿Crear una cuenta?
- </label>
-										  <label><input type="radio" name="optradio">  Enviar a una dirección diferente</label>
-										</div>
-									</div>
-                </div>
-	            </div>
-	          </form><!-- END -->
+<script>
+  function calcularTotal() {
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
+    const subtotal = carrito.reduce((acc, p) => acc + p.precio, 0);
+    const descuento = 3.00;
+    const total = subtotal - descuento;
 
+    document.getElementById("subtotal").innerText = `$${subtotal.toFixed(2)}`;
+    document.getElementById("descuento").innerText = `-$${descuento.toFixed(2)}`;
+    document.getElementById("total").innerText = `$${total.toFixed(2)}`;
+  }
 
-	          <div class="row mt-5 pt-3 d-flex">
-	          	<div class="col-md-6 d-flex">
-	          		<div class="cart-detail cart-total p-3 p-md-4">
-	          			<h3 class="billing-heading mb-4">TOTAL de la compra</h3>
-	          			<p class="d-flex">
-		    						<span>Subtotal</span>
-		    						<span>$20.60</span>
-		    					</p>
-		    					<p class="d-flex">
-		    						<span>Delivery</span>
-		    						<span>$0.00</span>
-		    					</p>
-		    					<p class="d-flex">
-		    						<span>Descuento</span>
-		    						<span>$3.00</span>
-		    					</p>
-		    					<hr>
-		    					<p class="d-flex total-price">
-		    						<span>Total</span>
-		    						<span>$17.60</span>
-		    					</p>
-								</div>
-	          	</div>
-	          	<div class="col-md-6">
-	          		<div class="cart-detail p-3 p-md-4">
-	          			<h3 class="billing-heading mb-4">Metodo de Pago</h3>
-									<div class="form-group">
-										<div class="col-md-12">
-											<div class="radio">
-											   <label><input type="radio" name="optradio" class="mr-2">Transferencia bancaria directa</label>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-md-12">
-											<div class="radio">
-											   <label><input type="radio" name="optradio" class="mr-2"> Pago en Efectivo</label>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-md-12">
-											<div class="radio">
-											   <label><input type="radio" name="optradio" class="mr-2"> Mercado Pago</label>
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-md-12">
-											<div class="checkbox">
-											   <label><input type="checkbox" value="" class="mr-2">He leído y acepto los términos y condiciones</label>
-											</div>
-										</div>
-									</div>
-									<p><a href="#"class="btn btn-primary py-3 px-4">Por favor haga su Pago</a></p>
-								</div>
-	          	</div>
-	          </div>
-          </div> <!-- .col-md-8 -->
-        </div>
-    	</div>
-    </section>
+  document.getElementById('checkout-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const acepta = document.getElementById("aceptaTerminos").checked;
+    if (!acepta) {
+      alert("Debe aceptar los términos y condiciones.");
+      return;
+    }
+
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+    if (carrito.length === 0) {
+      alert("No hay productos para comprar.");
+      return;
+    }
+
+    const productIds = carrito.map(p => p.id);
+    const userId = 1; // reemplazar con lógica de sesión real
+
+    const params = new URLSearchParams();
+    params.append("userId", userId);
+    productIds.forEach(id => params.append("productIds", id));
+
+    fetch("/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: params
+    })
+    .then(response => response.text())
+    .then(data => {
+      alert("Compra realizada con éxito");
+      localStorage.removeItem("carrito");
+      window.location.href = "/index.html"; // redirigir después del pago
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Ocurrió un error al procesar el pago.");
+    });
+  });
+
+  window.onload = calcularTotal;
+</script>
 
 	<footer class="ftco-footer">
 	      <div class="container">

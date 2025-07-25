@@ -1,19 +1,20 @@
 package com.tequila.ecommerce.vinoteca.models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "orders") // Nombre más descriptivo para la tabla
+@Table(name = "orders") //Define que esta clase es una tabla en la base de datos llamada "orders"
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id")  //atributos: id, fechaCreacion,estado,total,user,products.
+
     private Long id;
 
-    @Column(name = "fecha_creacion") // Nombre más descriptivo para la columna
+    @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
 
     @Column(name = "estado")
@@ -22,15 +23,15 @@ public class Order {
     @Column(name = "total")
     private Double total;
 
-    @ManyToOne
+    @ManyToOne // Cada pedido está asociado a un solo usuario.
     @JoinColumn(name = "user_id")
-    private User user; // Usar User en lugar de Users
+    private User user;
 
-    @ManyToMany
+    @ManyToMany //Muchos a muchos
     @JoinTable(
-            name = "order_products",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
+        name = "order_products",
+        joinColumns = @JoinColumn(name = "order_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     private List<Product> products;
 

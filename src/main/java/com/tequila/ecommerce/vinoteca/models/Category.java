@@ -1,9 +1,9 @@
 package com.tequila.ecommerce.vinoteca.models;
 
-import javax.persistence.*;
+import jakarta.persistence.*; // ✅ Importación correcta para las anotaciones JPA
 import java.util.List;
 
-@Entity
+@Entity // Entidad Categoría
 @Table(name = "category")
 public class Category {
 
@@ -21,14 +21,14 @@ public class Category {
     @Column(name = "tipo_producto")
     private String tipoProducto;
 
+    // Una categoría puede tener muchos productos asociados
+    // Si una categoría se elimina, también se eliminan sus productos
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
-    // Constructor sin argumentos
     public Category() {
     }
 
-    // Constructor con argumentos
     public Category(Long id, String name, String tipoBebida, String tipoProducto, List<Product> products) {
         this.id = id;
         this.name = name;

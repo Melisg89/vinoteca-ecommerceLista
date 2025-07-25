@@ -1,8 +1,21 @@
 HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
+bin/
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+### Archivos de entorno local
+*.env
+.env.*
+application-local.properties
 
 ### STS ###
 .apt_generated

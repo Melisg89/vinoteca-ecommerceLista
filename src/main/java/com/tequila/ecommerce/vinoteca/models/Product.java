@@ -1,7 +1,7 @@
 package com.tequila.ecommerce.vinoteca.models;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
@@ -30,7 +30,7 @@ public class Product {
     @NotNull(message = "Stock is mandatory")
     private Integer stock;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Cambiado a LAZY
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 

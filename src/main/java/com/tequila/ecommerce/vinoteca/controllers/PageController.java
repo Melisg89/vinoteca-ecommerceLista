@@ -3,11 +3,17 @@ package com.tequila.ecommerce.vinoteca.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Controller
-public class PageController {
+//gestiona la navegación entre páginas de la aplicación web del frontend.
+
+@Controller //no devuelve JSON, sino vistas HTML
+
+public class PageController { //responsable de redirigir las URLs
 
     @GetMapping("/")
-    public String index() {
+    //Cada uno de estos métodos captura una ruta, y redirige internamente hacia un archivo .html
+    //usando forward:/archivo.html.
+
+    public String index() { //"forward: redirige internamente al recurso HTML
         return "forward:/index.html";
     }
 

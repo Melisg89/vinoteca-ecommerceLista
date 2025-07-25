@@ -1,6 +1,6 @@
 package com.tequila.ecommerce.vinoteca.models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
@@ -22,19 +22,33 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user") // Define una relación de uno a muchos con la entidad Order
-    private List<Order> orders;
+    private List<Order> orders; // almacena todas las compras realizadas por el usuario.
 
-    public Long id() {
+    // Getters estándar JavaBean
+    public Long getId() {
         return id;
     }
 
+    public String getNombre() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public List<Order> getPedidos() {
+        return orders;
+    }
+
+    // Setters con retorno para encadenar
     public User setId(Long id) {
         this.id = id;
         return this;
-    }
-
-    public String nombre() {
-        return name;
     }
 
     public User setNombre(String nombre) {
@@ -42,26 +56,14 @@ public class User {
         return this;
     }
 
-    public String email() {
-        return email;
-    }
-
     public User setEmail(String email) {
         this.email = email;
         return this;
     }
 
-    public String password() {
-        return password;
-    }
-
     public User setPassword(String password) {
         this.password = password;
         return this;
-    }
-
-    public List<Order> pedidos() {
-        return orders;
     }
 
     public User setPedidos(List<Order> orders) {
