@@ -1,87 +1,118 @@
 package com.tequila.ecommerce.vinoteca.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "orders") //Define que esta clase es una tabla en la base de datos llamada "orders"
+@Table(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")  //atributos: id, fechaCreacion,estado,total,user,products.
-
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "fecha_creacion")
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
 
-    @Column(name = "estado")
+    @Column(name = "estado", nullable = false)
     private String estado;
 
-    @Column(name = "total")
+    @Column(name = "total", nullable = false)
     private Double total;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Aquí se guarda el usuario que realiza el pedido
+    @JsonBackReference
+    private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> items; // Relación correcta con OrderItem
+    @OneToMany(
+        mappedBy = "order",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    @JsonManagedReference
+    private List<OrderItem> items = new ArrayList<>();
 
-    // Getters y Setters
+    public Order() {
+    }
+
+    // Se ejecuta justo antes de insert para fijar fecha de creación
+    @PrePersist
+    private void prePersist() {
+        this.fechaCreacion = LocalDateTime.now();
+    }
+
+    // Helpers bidireccionales
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
+    }
+
+    public void removeItem(OrderItem item) {
+        items.remove(item);
+        item.setOrder(null);
+    }
+
+    // Getters y setters
+
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public Order setId(Long id) {
         this.id = id;
+        return this;
     }
 
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
     }
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+    public Order setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+        return this;
     }
 
     public String getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public Order setEstado(String estado) {
         this.estado = estado;
+        return this;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public Order setTotal(Double total) {
+        this.total = total;
+        return this;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Order setUser(User user) {
+        this.user = user;
+        return this;
     }
 
     public List<OrderItem> getItems() {
         return items;
     }
 
-    public void setItems(List<OrderItem> items) {
-        this.items = items;
+    public Order setItems(List<OrderItem> items) {
+        this.items = items != null ? items : new ArrayList<>();
+        return this;
     }
-
-    // Ejemplo de uso en el servicio/controlador:
-    // Order order = new Order();
-    // order.setUser(userService.findById(userId));
-    // order.setItems(orderItemService.findAllById(orderItemIds));
-    // orderService.createOrder(order);
 }
+

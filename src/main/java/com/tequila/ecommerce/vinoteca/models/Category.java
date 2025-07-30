@@ -1,9 +1,11 @@
 package com.tequila.ecommerce.vinoteca.models;
 
-import jakarta.persistence.*; // ✅ Importación correcta para las anotaciones JPA
+import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-@Entity // Entidad Categoría
+@Entity
 @Table(name = "category")
 public class Category {
 
@@ -12,7 +14,7 @@ public class Category {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "tipo_bebida")
@@ -21,10 +23,14 @@ public class Category {
     @Column(name = "tipo_producto")
     private String tipoProducto;
 
-    // Una categoría puede tener muchos productos asociados
-    // Si una categoría se elimina, también se eliminan sus productos
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products;
+    @OneToMany(
+        mappedBy = "category",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    @JsonManagedReference
+    private List<Product> products = new ArrayList<>();
 
     public Category() {
     }
@@ -34,10 +40,9 @@ public class Category {
         this.name = name;
         this.tipoBebida = tipoBebida;
         this.tipoProducto = tipoProducto;
-        this.products = products;
+        this.products = products != null ? products : new ArrayList<>();
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -75,6 +80,18 @@ public class Category {
     }
 
     public void setProducts(List<Product> products) {
-        this.products = products;
+        this.products = products != null ? products : new ArrayList<>();
+    }
+
+    // Helpers para añadir o eliminar productos manteniendo la relación bidireccional
+    public void addProduct(Product product) {
+        products.add(product);
+        product.setCategory(this);
+    }
+
+    public void removeProduct(Product product) {
+        products.remove(product);
+        product.setCategory(null);
     }
 }
+

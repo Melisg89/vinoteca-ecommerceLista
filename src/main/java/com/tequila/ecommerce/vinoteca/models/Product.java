@@ -3,6 +3,8 @@ package com.tequila.ecommerce.vinoteca.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "product")
@@ -13,7 +15,7 @@ public class Product {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false)
     private String name;
 
     @Column(name = "descripcion")
@@ -22,42 +24,28 @@ public class Product {
     @Column(name = "tipo_bebida")
     private String tipoBebida;
 
-    @Column(name = "precio")
-    @NotNull(message = "Price is mandatory")
+    @Column(name = "precio", nullable = false)
+    @NotNull(message = "El precio es obligatorio")
+    @JsonProperty("precio")
     private BigDecimal price;
 
-    @Column(name = "stock")
-    @NotNull(message = "Stock is mandatory")
+    @Column(name = "stock", nullable = false)
+    @NotNull(message = "El stock es obligatorio")
     private Integer stock;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
+    @JsonBackReference
     private Category category;
 
-    // Métodos auxiliares para compatibilidad con el frontend (precio y cantidad)
-    // El frontend puede enviar 'price' como número y 'quantity' como número.
-    // Agrega un campo transitorio para cantidad (no se guarda en la base de datos).
     @Transient
     private Integer quantity;
 
-    public Integer getQuantity() {
-        return quantity != null ? quantity : 1;
+    public Product() {
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
+    // Getters y setters
 
-    // Para compatibilidad con el frontend que use 'precio' o 'price'
-    public double getPrecio() {
-        return price != null ? price.doubleValue() : 0.0;
-    }
-
-    public void setPrecio(double precio) {
-        this.price = BigDecimal.valueOf(precio);
-    }
-
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -120,4 +108,14 @@ public class Product {
         this.category = category;
         return this;
     }
+
+    public Integer getQuantity() {
+        return quantity != null ? quantity : 1;
+    }
+
+    public Product setQuantity(Integer quantity) {
+        this.quantity = quantity;
+        return this;
+    }
 }
+
