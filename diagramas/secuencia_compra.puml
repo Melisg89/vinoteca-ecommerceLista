@@ -1,0 +1,21 @@
+@startuml
+actor Cliente
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "Base de Datos" as DB
+
+Cliente -> FE: Buscar producto
+FE -> BE: GET /productos
+BE -> DB: Consultar productos
+DB --> BE: Lista de productos
+BE --> FE: JSON con productos
+FE --> Cliente: Mostrar productos
+
+Cliente -> FE: Agregar al carrito
+FE -> BE: POST /carrito
+BE -> DB: Guardar producto en carrito
+
+Cliente -> FE: Realizar compra
+FE -> BE: POST /pedido
+BE -> DB: Guardar pedido y actualizar stock
+@enduml

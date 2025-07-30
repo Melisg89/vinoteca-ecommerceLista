@@ -23,17 +23,12 @@ public class Order {
     @Column(name = "total")
     private Double total;
 
-    @ManyToOne // Cada pedido está asociado a un solo usuario.
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // Aquí se guarda el usuario que realiza el pedido
 
-    @ManyToMany //Muchos a muchos
-    @JoinTable(
-        name = "order_products",
-        joinColumns = @JoinColumn(name = "order_id"),
-        inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> products;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items; // Relación correcta con OrderItem
 
     // Getters y Setters
     public Long getId() {
@@ -76,11 +71,17 @@ public class Order {
         this.estado = estado;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public List<OrderItem> getItems() {
+        return items;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
     }
+
+    // Ejemplo de uso en el servicio/controlador:
+    // Order order = new Order();
+    // order.setUser(userService.findById(userId));
+    // order.setItems(orderItemService.findAllById(orderItemIds));
+    // orderService.createOrder(order);
 }

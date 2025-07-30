@@ -58,9 +58,16 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order newOrder = orderService.createOrder(order);
-        return new ResponseEntity<>(newOrder, HttpStatus.CREATED);
+    public ResponseEntity<?> createOrder(@RequestBody Order order) {
+        try {
+            Order newOrder = orderService.createOrder(order);
+            return new ResponseEntity<>(newOrder, HttpStatus.CREATED);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body("{\"message\": \"" + ex.getMessage() + "\"}");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("{\"message\": \"Error interno: " + ex.getMessage() + "\"}");
+        }
     }
 
     @PutMapping("/{orderId}") //Modifica un pedido existente
@@ -68,12 +75,30 @@ public class OrderController {
             @PathVariable Long orderId, @RequestBody Order order) {
         order.setId(orderId);
         Order updatedOrder = orderService.updateOrder(order);
-        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+        if (updatedOrder != null) {
+            return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/{orderId}") //Elimina un pedido.
     public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
-        orderService.deleteOrder(orderId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        boolean deleted = orderService.deleteOrder(orderId);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/{orderId}") //Trae un pedido por su ID
+    public ResponseEntity<Order> getOrderById(@PathVariable Long orderId) {
+        Order order = orderService.getOrderById(orderId);
+        if (order != null) {
+            return new ResponseEntity<>(order, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

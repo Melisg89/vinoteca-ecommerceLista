@@ -186,6 +186,10 @@
             <p class="text-center">
               <a href="checkout.html" class="btn btn-primary py-3 px-4">FINALIZAR COMPRA</a>
             </p>
+            <!-- Botón para realizar compra directamente -->
+            <p class="text-center">
+              <button id="realizarCompraBtn" class="btn btn-success py-3 px-4">REALIZAR COMPRA</button>
+            </p>
           </div>
         </div>
       </div>
@@ -247,6 +251,41 @@
         document.getElementById("total").innerText = formatPrice(subtotal); // Puedes sumar delivery o restar descuento aquí
       }
 
+      // Función para enviar el pedido al backend
+      function realizarCompra() {
+        const cart = getCart();
+        if (cart.length === 0) {
+          alert("El carrito está vacío.");
+          return;
+        }
+
+        // Construir el objeto Order según tu modelo backend
+        const order = {
+          productos: cart, // Ajusta el nombre del campo según tu modelo Order
+          // Puedes agregar más campos si tu modelo lo requiere (usuario, fecha, etc.)
+        };
+
+        fetch('/pedido', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(order)
+        })
+        .then(response => {
+          if (response.ok) {
+            alert('¡Compra realizada con éxito!');
+            localStorage.removeItem('carrito');
+            renderCart();
+          } else {
+            alert('Error al realizar la compra.');
+          }
+        })
+        .catch(error => {
+          alert('Error de red al realizar la compra.');
+        });
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
         renderCart();
 
@@ -271,6 +310,9 @@
             renderCart();
           }
         });
+
+        // Evento para el botón de realizar compra
+        document.getElementById("realizarCompraBtn").addEventListener("click", realizarCompra);
       });
     </script>
   </body>

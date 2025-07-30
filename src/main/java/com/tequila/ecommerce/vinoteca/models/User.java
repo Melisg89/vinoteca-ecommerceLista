@@ -1,5 +1,6 @@
 package com.tequila.ecommerce.vinoteca.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -21,7 +22,8 @@ public class User {
     @Column(name = "password") // nombre de la columna en la base de datos
     private String password;
 
-    @OneToMany(mappedBy = "user") // Define una relación de uno a muchos con la entidad Order
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore // Evita el error de lazy initialization al serializar User
     private List<Order> orders; // almacena todas las compras realizadas por el usuario.
 
     // Getters estándar JavaBean

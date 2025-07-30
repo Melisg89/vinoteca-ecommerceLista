@@ -1,0 +1,18 @@
+@startuml
+actor Cliente
+actor Administrador
+
+usecase "Registrarse / Iniciar sesión" as UC1
+usecase "Buscar productos" as UC2
+usecase "Agregar al carrito" as UC3
+usecase "Realizar compra" as UC4
+usecase "Gestionar stock" as UC5
+usecase "Ver pedidos" as UC6
+
+Cliente --> UC1
+Cliente --> UC2
+Cliente --> UC3
+Cliente --> UC4
+Administrador --> UC5
+Administrador --> UC6
+@enduml

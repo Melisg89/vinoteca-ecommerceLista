@@ -1,61 +1,122 @@
 package com.tequila.ecommerce.vinoteca.services;
 
 import com.tequila.ecommerce.vinoteca.models.Order;
+import com.tequila.ecommerce.vinoteca.models.User;
+import com.tequila.ecommerce.vinoteca.models.Product;
+import com.tequila.ecommerce.vinoteca.models.OrderItem;
 import com.tequila.ecommerce.vinoteca.repository.OrderRepository;
+import com.tequila.ecommerce.vinoteca.repository.UserRepository;
+import com.tequila.ecommerce.vinoteca.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service // encargado de la lógica de negocio sobre las órdenes.
-
+@Service
 public class OrderService {
 
-    @Autowired // Esto permite acceder a la capa de persistencia (base de datos)
+    @Autowired
     private OrderRepository orderRepository;
 
-    public List<Order> getOrdersByFechaCreacion(LocalDateTime fechaCreacion) {//Obtiene órdenes creadas en una fecha específica
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    public List<Order> getOrdersByFechaCreacion(LocalDateTime fechaCreacion) {
         return orderRepository.findByFechaCreacion(fechaCreacion);
     }
 
-    public List<Order> getAllOrders() { //Obtiene todas las órdenes.
+    public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    public List<Order> getOrdersByEstado(String estado) {//Obtiene órdenes filtradas por su estado (ej. pendiente).
+    public List<Order> getOrdersByEstado(String estado) {
         return orderRepository.findByEstado(estado);
     }
 
-    public List<Order> getOrdersByUserId(Long userId) {//Obtiene órdenes asociadas a un usuario específico.
+    public List<Order> getOrdersByUserId(Long userId) {
         return orderRepository.findByUser_Id(userId);
     }
 
     public List<Order> getOrdersByFechaCreacionBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         return orderRepository.findByFechaCreacionBetween(fechaInicio, fechaFin);
-    }//Obtiene órdenes creadas en un rango de fechas.
+    }
 
-    //Paginacion:
     public Page<Order> getAllOrdersPaginated(Pageable pageable) {
         return orderRepository.findAll(pageable);
-    } //Obtiene todas las órdenes, pero paginadas para optimizar consultas con muchos datos.
+    }
 
     public Page<Order> getOrdersByEstadoPaginated(String estado, Pageable pageable) {
         return orderRepository.findByEstado(estado, pageable);
-    }//Obtiene órdenes por estado, paginadas.
+    }
 
-    //Operaciones de escritura:
     public Order updateOrder(Order order) {
-        return orderRepository.save(order); //Crea una nueva orden en la base de datos.
+        if (order.getId() != null && orderRepository.existsById(order.getId())) {
+            return orderRepository.save(order);
+        }
+        return null;
     }
 
+    @Transactional
     public Order createOrder(Order order) {
-        return orderRepository.save(order);// Actualiza una orden existente.
+        order.setId(null);
+
+        // Validar usuario
+        if (order.getUser() == null || order.getUser().getId() == null) {
+            throw new IllegalArgumentException("El usuario es obligatorio.");
+        }
+        User user = userRepository.findById(order.getUser().getId()).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
+        }
+        order.setUser(user);
+
+        // Validar y asociar productos en items
+        if (order.getItems() == null || order.getItems().isEmpty()) {
+            throw new IllegalArgumentException("Debe haber al menos un producto en la orden.");
+        }
+        for (OrderItem item : order.getItems()) {
+            if (item.getProduct() == null || item.getProduct().getId() == null) {
+                throw new IllegalArgumentException("Producto inválido en el carrito.");
+            }
+            Product product = productRepository.findById(item.getProduct().getId()).orElse(null);
+            if (product == null) {
+                throw new IllegalArgumentException("Producto no encontrado (ID: " + item.getProduct().getId() + ")");
+            }
+            item.setProduct(product);
+            item.setOrder(order);
+            if (item.getQuantity() == null || item.getQuantity() < 1) {
+                throw new IllegalArgumentException("Cantidad inválida para el producto " + product.getName());
+            }
+        }
+
+        if (order.getFechaCreacion() == null) {
+            order.setFechaCreacion(LocalDateTime.now());
+        }
+        if (order.getEstado() == null) {
+            order.setEstado("pendiente");
+        }
+
+        // Calcula el total usando cantidad * precio
+        double total = order.getItems().stream()
+            .mapToDouble(item -> item.getProduct().getPrice().doubleValue() * item.getQuantity())
+            .sum();
+        order.setTotal(total);
+
+        return orderRepository.save(order);
     }
 
-    public void deleteOrder(Long orderId) {
-        orderRepository.deleteById(orderId);//Elimina una orden por su ID
+    public boolean deleteOrder(Long orderId) {
+        if (orderRepository.existsById(orderId)) {
+            orderRepository.deleteById(orderId);
+            return true;
+        }
+        return false;
     }
 }

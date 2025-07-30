@@ -34,6 +34,29 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    // Métodos auxiliares para compatibilidad con el frontend (precio y cantidad)
+    // El frontend puede enviar 'price' como número y 'quantity' como número.
+    // Agrega un campo transitorio para cantidad (no se guarda en la base de datos).
+    @Transient
+    private Integer quantity;
+
+    public Integer getQuantity() {
+        return quantity != null ? quantity : 1;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    // Para compatibilidad con el frontend que use 'precio' o 'price'
+    public double getPrecio() {
+        return price != null ? price.doubleValue() : 0.0;
+    }
+
+    public void setPrecio(double precio) {
+        this.price = BigDecimal.valueOf(precio);
+    }
+
     // Getters y Setters
     public Long getId() {
         return id;

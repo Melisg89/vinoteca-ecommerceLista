@@ -1,16 +1,11 @@
 package com.tequila.ecommerce.vinoteca.controllers;
 
-import com.tequila.ecommerce.vinoteca.models.Order;
-import com.tequila.ecommerce.vinoteca.models.User;
-import com.tequila.ecommerce.vinoteca.models.Product;
-import com.tequila.ecommerce.vinoteca.services.OrderService;
-import com.tequila.ecommerce.vinoteca.services.UserService;
-import com.tequila.ecommerce.vinoteca.services.ProductServices;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.tequila.ecommerce.vinoteca.models.Order;
+import com.tequila.ecommerce.vinoteca.services.OrderService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -20,37 +15,15 @@ public class CheckoutController {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ProductServices productService;
-
     @PostMapping
-    public String realizarCheckout(@RequestParam Long userId, @RequestParam List<Long> productIds) {
-        User user = userService.obtenerUsuarioPorId(userId);
-        if (user == null) {
-            return "Usuario no encontrado";
+    public ResponseEntity<?> procesarCheckout(@RequestBody Order order) {
+        try {
+            Order newOrder = orderService.createOrder(order);
+            return ResponseEntity.ok(newOrder);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body("{\"message\": \"" + ex.getMessage() + "\"}");
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body("{\"message\": \"Error interno: " + ex.getMessage() + "\"}");
         }
-
-        List<Product> productos = productService.obtenerProductosPorIds(productIds);
-        if (productos.isEmpty()) {
-            return "No hay productos para comprar";
-        }
-
-        double total = productos.stream()
-        	    .mapToDouble(product -> product.getPrice().doubleValue())
-        	    .sum();
-
-        Order order = new Order();
-        order.setUser(user);
-        order.setProducts(productos);
-        order.setFechaCreacion(LocalDateTime.now());
-        order.setEstado("Pendiente");
-        order.setTotal(total);
-
-        orderService.createOrder(order);
-
-        return "Pedido realizado correctamente";
     }
 }

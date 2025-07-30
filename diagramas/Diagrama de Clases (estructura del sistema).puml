@@ -1,0 +1,40 @@
+@startuml
+class Usuario {
+  -id: int
+  -nombre: String
+  -email: String
+  -contraseña: String
+}
+
+class Cliente extends Usuario {
+  +comprar(): void
+}
+
+class Administrador extends Usuario {
+  +gestionarProductos(): void
+}
+
+class Producto {
+  -id: int
+  -nombre: String
+  -precio: double
+  -stock: int
+}
+
+class Pedido {
+  -id: int
+  -fecha: Date
+  -total: double
+}
+
+class Carrito {
+  -id: int
+  -productos: List<Producto>
+}
+
+Cliente --> Carrito
+Carrito --> Producto
+Cliente --> Pedido
+Pedido --> Producto
+Administrador --> Producto
+@enduml
