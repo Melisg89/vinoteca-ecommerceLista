@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CategoryController {  //gestiona todas las operaciones relacionadas con las categorías de productos
 
-    @Autowired
+    @Autowired //Inyección de dependencia automática
     private CategoryServices categoryServices; //Conecta con el sistema, delega la lógica de negocio
 
     @GetMapping
