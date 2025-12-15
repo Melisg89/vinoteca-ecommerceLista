@@ -1,20 +1,21 @@
 package com.tequila.ecommerce.vinoteca.services;
 
-import com.tequila.ecommerce.vinoteca.models.Order;
-import com.tequila.ecommerce.vinoteca.models.User;
-import com.tequila.ecommerce.vinoteca.models.Product;
-import com.tequila.ecommerce.vinoteca.models.OrderItem;
-import com.tequila.ecommerce.vinoteca.repository.OrderRepository;
-import com.tequila.ecommerce.vinoteca.repository.UserRepository;
-import com.tequila.ecommerce.vinoteca.repository.ProductRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import com.tequila.ecommerce.vinoteca.models.Order;
+import com.tequila.ecommerce.vinoteca.models.OrderItem;
+import com.tequila.ecommerce.vinoteca.models.Product;
+import com.tequila.ecommerce.vinoteca.models.User;
+import com.tequila.ecommerce.vinoteca.repository.OrderRepository;
+import com.tequila.ecommerce.vinoteca.repository.ProductRepository;
+import com.tequila.ecommerce.vinoteca.repository.UserRepository;
 
 @Service
 public class OrderService {
@@ -30,6 +31,10 @@ public class OrderService {
 
     public List<Order> getOrdersByFechaCreacion(LocalDateTime fechaCreacion) {
         return orderRepository.findByFechaCreacion(fechaCreacion);
+    }
+
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id).orElse(null);
     }
 
     public List<Order> getAllOrders() {
