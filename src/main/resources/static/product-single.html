@@ -130,7 +130,7 @@
         </a>
       </div>
       <div class="col-lg-6 product-details pl-md-5 ftco-animate">
-        <h3>Bacardi 151 Fuego en cada gota</h3>
+        <h3>Bacardi 151 - Fuego en cada gota</h3>
         <div class="rating d-flex">
           <p class="text-left mr-4">
             <a href="#" class="mr-2">5.0</a>
@@ -141,57 +141,171 @@
             <a href="#"><span class="fa fa-star"></span></a>
           </p>
           <p class="text-left mr-4">
-            <a href="#" class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Clasificación</span></a>
+            <a href="#" class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Valoraciones</span></a>
           </p>
           <p class="text-left">
-            <a href="#" class="mr-2" style="color: #000;">500 <span style="color: #bbb;">Vendido</span></a>
+            <a href="#" class="mr-2" style="color: #000;">500+ <span style="color: #bbb;">Vendidos</span></a>
           </p>
         </div>
-        <p class="price"><span>$120.00</span></p>
+        
+        <p class="price"><span class="price-current">$120.00</span></p>
+        
         <p>
           No es un ron cualquiera, es una leyenda embotellada. Con sus 75.5% de alcohol, Bacardi 151° es intensidad pura: audaz, desafiante y reservado solo para quienes buscan experiencias fuertes. Ideal para cócteles flamantes o para quienes disfrutan el riesgo en cada sorbo.
         </p>
         <p>
           Una bebida mítica, con carácter indomable.
         </p>
+        
         <div class="row mt-4">
           <div class="input-group col-md-6 d-flex mb-3">
-            <!-- Acá podés agregar botones de cantidad o agregar al carrito -->
+            <span class="input-group-btn mr-2">
+              <button type="button" class="quantity-left-minus btn" data-type="minus" data-field="">
+                <i class="fa fa-minus"></i>
+              </button>
+            </span>
+            <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
+            <span class="input-group-btn ml-2">
+              <button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
+                <i class="fa fa-plus"></i>
+              </button>
+            </span>
           </div>
         </div>
 
-        <div class="row mt-5">
-          <div class="col-md-12 nav-link-wrap">
-            <div class="nav nav-pills d-flex text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-              <a class="nav-link ftco-animate active mr-lg-1" id="v-pills-1-tab" data-toggle="pill" href="#v-pills-1" role="tab" aria-controls="v-pills-1" aria-selected="true">Descripción</a>
-              <a class="nav-link ftco-animate mr-lg-1" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="false">Fabricado por</a>
-            </div>
-          </div>
+        <p>
+          <button 
+            class="btn btn-primary py-3 px-5 add-to-cart-btn"
+            data-id="1"
+            data-name="Bacardi 151"
+            data-price="120.00"
+            data-image="images/prod-1.jpg">
+            Agregar al carrito
+          </button>
+        </p>
+        
+        <p><strong>SKU:</strong> BACA-151-001</p>
+        <p><strong>Categoría:</strong> <a href="#">Ron</a></p>
+        <p><strong>Tipo:</strong> Ron oscuro</p>
+        <p><strong>Origen:</strong> Puerto Rico</p>
+        <p><strong>Grados:</strong> 75.5% ABV</p>
+      </div>
+    </div>
 
-          <div class="col-md-12 tab-wrap">
-            <div class="tab-content bg-light" id="v-pills-tabContent">
-
-              <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-1-tab">
-                <div class="p-4">
-                  <h3 class="mb-4">Bacardi 151 Degree</h3>
-                  <p>Es un ron de alta graduación (75.5% de alcohol), conocido por su potencia y sabor intenso. Su perfil es fuerte, con notas ahumadas y dulces que lo hacen ideal para tragos flameantes y cócteles con carácter. No es para cualquiera: es para quienes buscan una experiencia extrema en cada trago.</p>
-                </div>
-              </div>
-
-              <div class="tab-pane fade" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-2-tab">
-                <div class="p-4">
-                  <h3 class="mb-4">Fabricado por:</h3>
-                  <p>Bacardi 151° fue fabricado por Bacardi Limited, una de las compañías de bebidas alcohólicas más grandes y reconocidas del mundo, fundada en 1862 en Santiago de Cuba.</p>
-                </div>
-              </div>
-
-            </div>
-          </div>
+    <div class="row mt-5">
+      <div class="col-md-12 nav-link-wrap">
+        <div class="nav nav-pills d-flex text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+          <a class="nav-link ftco-animate active mr-lg-1" id="v-pills-1-tab" data-toggle="pill" href="#v-pills-1" role="tab" aria-controls="v-pills-1" aria-selected="true">Descripción</a>
+          <a class="nav-link ftco-animate mr-lg-1" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="false">Especificaciones</a>
+          <a class="nav-link ftco-animate mr-lg-1" id="v-pills-3-tab" data-toggle="pill" href="#v-pills-3" role="tab" aria-controls="v-pills-3" aria-selected="false">Reseñas</a>
         </div>
+      </div>
 
-      </div> <!-- Cierre de col-lg-6 -->
-    </div> <!-- Cierre de row -->
-  </div> <!-- Cierre de container -->
+      <div class="col-md-12 tab-wrap">
+        <div class="tab-content bg-light" id="v-pills-tabContent">
+
+          <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-1-tab">
+            <div class="p-4">
+              <h3 class="mb-4">Bacardi 151 Degree</h3>
+              <p>Es un ron de alta graduación (75.5% de alcohol), conocido por su potencia y sabor intenso. Su perfil es fuerte, con notas ahumadas y dulces que lo hacen ideal para tragos flameantes y cócteles con carácter.</p>
+              <p>No es para cualquiera: es para quienes buscan una experiencia extrema en cada trago. Su versatilidad en cócteles es excepcional, permitiendo crear bebidas memorables y audaces.</p>
+              <h4 class="mt-4">Notas de cata:</h4>
+              <ul>
+                <li>Aroma: Intenso y penetrante con notas ahumadas</li>
+                <li>Sabor: Fuerte y complejo con toques dulces</li>
+                <li>Final: Largo y ardiente</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-2-tab">
+            <div class="p-4">
+              <h3 class="mb-4">Especificaciones Técnicas</h3>
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <td><strong>Nombre:</strong></td>
+                    <td>Bacardi 151 Rum</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tipo:</strong></td>
+                    <td>Ron oscuro de alta graduación</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Origen:</strong></td>
+                    <td>Puerto Rico</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Graduación Alcohólica:</strong></td>
+                    <td>75.5% ABV (151 Proof)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Volumen:</strong></td>
+                    <td>750 ml</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Productor:</strong></td>
+                    <td>Bacardi Limited</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Color:</strong></td>
+                    <td>Ámbar oscuro</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Edad:</strong></td>
+                    <td>Sin envejecimiento especificado</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="v-pills-3" role="tabpanel" aria-labelledby="v-pills-3-tab">
+            <div class="p-4">
+              <h3 class="mb-4">Reseñas de Clientes</h3>
+              
+              <div class="review mb-4">
+                <div class="user-img" style="background-image: url(images/person_1.jpg);"></div>
+                <div class="desc">
+                  <h4>
+                    <span>Carlos M.</span>
+                    <span>5.0</span>
+                  </h4>
+                  <p class="review-date">Hace 2 semanas</p>
+                  <p>Excelente para preparar cócteles flameantes. La calidad es inmejorable y el precio es competitivo. Entrega rápida.</p>
+                </div>
+              </div>
+
+              <div class="review mb-4">
+                <div class="user-img" style="background-image: url(images/person_2.jpg);"></div>
+                <div class="desc">
+                  <h4>
+                    <span>Juan P.</span>
+                    <span>4.5</span>
+                  </h4>
+                  <p class="review-date">Hace 1 mes</p>
+                  <p>Buen producto. Es bastante fuerte, recomendado solo para los más audaces. Excelente para coleccionar.</p>
+                </div>
+              </div>
+
+              <div class="review">
+                <div class="user-img" style="background-image: url(images/person_3.jpg);"></div>
+                <div class="desc">
+                  <h4>
+                    <span>María G.</span>
+                    <span>5.0</span>
+                  </h4>
+                  <p class="review-date">Hace 1 mes</p>
+                  <p>Perfecto para la barra de casa. Llegó en excelente estado. El vendedor fue muy atento. ¡Volveré a comprar!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 
@@ -261,9 +375,9 @@
 	      		<div class="row">
 		          <div class="col-md-12">
 			
-		            <p class="mb-0" style="color: rgba(255,255,255,.5);"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-		  Copyright &copy;<script>document.write(new Date().getFullYear());</script>  Todos los derechos reservados | <i class="fa fa-heart color-danger" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a>
-		  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+		            <p class="mb-0" style="color: rgba(255,255,255,.5);">
+	  Copyright &copy;<script>document.write(new Date().getFullYear());</script> Todos los derechos reservados | Tienda de Licores
+	            </p>
 		          </div>
 		        </div>
 	      	</div>
