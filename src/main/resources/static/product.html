@@ -26,10 +26,7 @@
 					<div class="container">
 						<div class="row">
 							<div class="col-md-6 d-flex align-items-center">
-								<p class="mb-0 phone pl-md-2">
-									<a href="#" class="mr-2"><span class="fa fa-phone mr-1"></span> +54261000000/a</a> 
-									<a href="#"><span class="fa fa-paper-plane mr-1"></span> salewine@email.com</a>
-								</p>
+								<!-- ...existing code... -->
 							</div>
 							<div class="col-md-6 d-flex justify-content-md-end">
 								<div class="social-media mr-4">
@@ -41,18 +38,25 @@
 					    		</p>
 				        </div>
 				        
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+			</div>
 	    
 		  <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 		    <div class="container">
 		      <a class="navbar-brand" href="index.html">Tienda de <span>Licores</span></a>
-		      
-
-	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-	        <span class="oi oi-menu"></span> Menu
+	      <div class="order-lg-last btn-group">
+          <a href="#" class="btn-cart dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          	<span class="flaticon-shopping-bag"></span>
+          	<div class="d-flex justify-content-center align-items-center"><small id="cart-count">0</small></div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown">
+          	<!-- Los items del carrito se cargarán dinámicamente aquí -->
+          </div>
+        </div>
 	      </button>
 
 		  <div class="collapse navbar-collapse" id="ftco-nav">
@@ -227,6 +231,44 @@
     localStorage.setItem('carrito', JSON.stringify(carrito));
   }
 
+  function actualizarDropdownCarrito() {
+    const carrito = getCarrito();
+    const dropdown = document.getElementById('cart-dropdown');
+    const countBadge = document.getElementById('cart-count');
+    
+    // Actualizar el contador de items
+    countBadge.textContent = carrito.length;
+    
+    // Limpiar el dropdown
+    dropdown.innerHTML = '';
+    
+    if (carrito.length === 0) {
+      dropdown.innerHTML = '<div class="dropdown-item text-center">Carrito vacío</div>';
+    } else {
+      // Agregar cada item del carrito
+      carrito.forEach(item => {
+        const itemHTML = `
+          <div class="dropdown-item d-flex align-items-start">
+            <div class="img" style="background-image: url(${item.image});"></div>
+            <div class="text pl-3">
+              <h4>${item.name}</h4>
+              <p class="mb-0"><a href="#" class="price">$${item.price.toFixed(2)} c/u</a><span class="quantity ml-3">Cantidad: ${String(item.cantidad).padStart(2, '0')}</span></p>
+            </div>
+          </div>
+        `;
+        dropdown.innerHTML += itemHTML;
+      });
+      
+      // Agregar botón "Ver Todo"
+      dropdown.innerHTML += `
+        <a class="dropdown-item text-center btn-link d-block w-100" href="cart.html">
+          Ver Todo
+          <span class="ion-ios-arrow-round-forward"></span>
+        </a>
+      `;
+    }
+  }
+
   function agregarAlCarrito(producto) {
     const carrito = getCarrito();
     const index = carrito.findIndex(p => p.id === producto.id);
@@ -237,11 +279,16 @@
       carrito.push(producto);
     }
     guardarCarrito(carrito);
+    actualizarDropdownCarrito();
     alert(`Se agregó "${producto.name}" al carrito.`);
   }
 
   // Ejecutar después de que el DOM esté cargado
   window.addEventListener('DOMContentLoaded', () => {
+    // Inicializar el dropdown del carrito
+    actualizarDropdownCarrito();
+    
+    // Agregar listeners a los botones de "Agregar al carrito"
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const producto = {
