@@ -1,7 +1,6 @@
 package com.tequila.ecommerce.vinoteca.security;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
@@ -27,10 +26,16 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    public String generateToken(Long userId, String email, String role) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
-        return createToken(claims, userId.toString(), email);
+    public String generateToken(Long userId, String email, String role, String nombre) {
+        return Jwts.builder()
+            .setSubject(userId.toString())
+            .claim("email", email)
+            .claim("role", role)
+            .claim("nombre", nombre)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+            .signWith(getSigningKey())
+            .compact();
     }
 
     private String createToken(Map<String, Object> claims, String subject, String email) {

@@ -42,13 +42,15 @@
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
       <div class="container">
         <a class="navbar-brand" href="index.html">Tienda de <span>Licores</span></a>
-        <div class="order-lg-last btn-group d-flex align-items-center">
+        <div class="order-lg-last d-flex align-items-center">
           <div class="reg mr-3" style="display: inline-block;"></div>
-          <a href="#" class="btn-cart dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="flaticon-shopping-bag"></span>
-            <div class="d-flex justify-content-center align-items-center"><small id="cart-count">0</small></div>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown">
+          <div class="btn-group">
+            <a href="#" class="btn-cart dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="flaticon-shopping-bag"></span>
+              <div class="d-flex justify-content-center align-items-center"><small id="cart-count">0</small></div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown">
+            </div>
           </div>
         </div>
 
@@ -346,7 +348,7 @@
     // Obtener el token del usuario
     const token = localStorage.getItem('jwt');
 
-    fetch("/checkout", {
+    fetch("/api/checkout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -501,16 +503,12 @@
       
       if (!dropdown || !countBadge) return;
       
-      // Actualizar el contador de items
       countBadge.textContent = carrito.length;
-      
-      // Limpiar el dropdown
       dropdown.innerHTML = '';
       
       if (carrito.length === 0) {
         dropdown.innerHTML = '<div class="dropdown-item text-center">Carrito vacío</div>';
       } else {
-        // Agregar cada item del carrito
         carrito.forEach(item => {
           const itemHTML = `
             <div class="dropdown-item d-flex align-items-start">
@@ -524,7 +522,6 @@
           dropdown.innerHTML += itemHTML;
         });
         
-        // Agregar botón "Ver Todo"
         dropdown.innerHTML += `
           <a class="dropdown-item text-center btn-link d-block w-100" href="cart.html">
             Ver Todo
@@ -534,15 +531,13 @@
       }
     }
 
-    // Ejecutar cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', actualizarDropdownCarrito);
-    
-    // Actualizar el carrito cada segundo (para sincronización entre pestañas)
     setInterval(actualizarDropdownCarrito, 1000);
   </script>
   
   <script src="js/main.js"></script>
   <script src="js/auth-topbar.js"></script>
+  <script src="js/checkout-handler.js"></script>
     
   </body>
 </html>

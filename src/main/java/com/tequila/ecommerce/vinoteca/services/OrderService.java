@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +23,9 @@ import com.tequila.ecommerce.vinoteca.repository.UserRepository;
 
 @Service
 public class OrderService {
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
+    
     @Autowired
     private OrderRepository orderRepository;
 
@@ -105,6 +109,56 @@ public class OrderService {
         orderRepository.flush(); // Fuerza la sincronización con la BD
         
         return savedOrder;
+    }
+
+    public Order createOrder(OrderDTO orderDTO, User user) {
+        logger.info("📝 Creando orden para usuario: {}", user.getEmail());
+        
+        try {
+            Order order = new Order();
+            order.setUser(user);
+            order.setFirstname(orderDTO.getFirstname());
+            order.setLastname(orderDTO.getLastname());
+            order.setDepartment(orderDTO.getDepartment());
+            order.setStreetaddress(orderDTO.getStreetaddress());
+            order.setApartment(orderDTO.getApartment());
+            order.setPostcodezip(orderDTO.getPostcodezip());
+            order.setPhone(orderDTO.getPhone());
+            order.setEmailaddress(orderDTO.getEmailaddress());
+            order.setPaymentMethod(orderDTO.getPaymentMethod());
+            order.setTotalAmount(orderDTO.getTotalAmount());
+            order.setEstado("PENDIENTE");
+            order.setFechaCreacion(LocalDateTime.now());
+            
+            // Convertir OrderItemDTO a OrderItem
+            List<OrderItem> processedItems = new ArrayList<>();
+            for (OrderItemDTO itemDTO : orderDTO.getItems()) {
+                if (itemDTO.getProduct() == null || itemDTO.getProduct().getId() == null) {
+                    throw new IllegalArgumentException("Producto inválido en los items");
+                }
+                
+                Product product = productRepository.findById(itemDTO.getProduct().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + itemDTO.getProduct().getId()));
+                
+                OrderItem item = new OrderItem();
+                item.setOrder(order);
+                item.setProduct(product);
+                item.setQuantity(itemDTO.getQuantity() != null && itemDTO.getQuantity() > 0 ? itemDTO.getQuantity() : 1);
+                item.setPrice(itemDTO.getPrice() != null && itemDTO.getPrice() > 0 ? itemDTO.getPrice() : product.getPrice().doubleValue());
+                
+                processedItems.add(item);
+            }
+            
+            order.setItems(processedItems);
+            
+            Order savedOrder = orderRepository.save(order);
+            logger.info("✅ Orden creada exitosamente con ID: {}", savedOrder.getId());
+            
+            return savedOrder;
+        } catch (Exception e) {
+            logger.error("❌ Error al crear orden: ", e);
+            throw new RuntimeException("Error al crear la orden: " + e.getMessage());
+        }
     }
 
     public List<Order> getAllOrders() {
