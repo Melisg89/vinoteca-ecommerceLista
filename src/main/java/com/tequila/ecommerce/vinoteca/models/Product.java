@@ -39,6 +39,9 @@ public class Product {
     @NotNull(message = "El stock es obligatorio")
     private Integer stock;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
     @JsonManagedReference
@@ -94,6 +97,15 @@ public class Product {
 
     public Product setStock(Integer stock) {
         this.stock = stock;
+        return this;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public Product setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
         return this;
     }
 

@@ -29,38 +29,38 @@ public class ProductService {
     public Product createProduct(ProductDTO productDTO) {
         logger.info("📝 Creando producto: {}", productDTO.getNombre());
         
+        Category category = categoryRepository.findById(productDTO.getCategoryId())
+            .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
+
         Product product = new Product();
         product.setNombre(productDTO.getNombre());
         product.setDescripcion(productDTO.getDescripcion());
-        product.setPrecio(BigDecimal.valueOf(productDTO.getPrecio()));
+        product.setPrecio(productDTO.getPrecio());
         product.setStock(productDTO.getStock());
-        
-        if (productDTO.getCategoryId() != null) {
-            Category category = categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
-            product.setCategory(category);
-        }
-        
+        product.setCategory(category);
+        product.setImageUrl(productDTO.getImageUrl());
+
         return productRepository.save(product);
     }
 
-    public Product updateProduct(Long productId, ProductDTO productDTO) {
-        logger.info("📝 Actualizando producto ID: {}", productId);
+    public Product updateProduct(Long id, ProductDTO productDTO) {
+        logger.info("📝 Actualizando producto ID: {}", id);
         
-        Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+
         product.setNombre(productDTO.getNombre());
         product.setDescripcion(productDTO.getDescripcion());
-        product.setPrecio(BigDecimal.valueOf(productDTO.getPrecio()));
+        product.setPrecio(productDTO.getPrecio());
         product.setStock(productDTO.getStock());
-        
+        product.setImageUrl(productDTO.getImageUrl());
+
         if (productDTO.getCategoryId() != null) {
             Category category = categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+                .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
             product.setCategory(category);
         }
-        
+
         return productRepository.save(product);
     }
 

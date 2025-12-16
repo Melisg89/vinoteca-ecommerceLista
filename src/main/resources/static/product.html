@@ -380,10 +380,13 @@
           console.log('✅ Datos recibidos:', productos.length, 'productos');
           
           container.innerHTML = '';
-          const imagenes = ['images/prod-1.jpg', 'images/prod-2.jpg', 'images/prod-3.jpg', 'images/prod-4.jpg'];
+          const imagenesDefault = ['images/prod-1.jpg', 'images/prod-2.jpg', 'images/prod-3.jpg', 'images/prod-4.jpg'];
           
           productos.forEach((p, i) => {
-            const img = imagenes[i % imagenes.length];
+            // Usar imageUrl de BD, si no existe usar fallback
+            const img = (p.imageUrl && p.imageUrl.trim() !== '') ? p.imageUrl : imagenesDefault[i % imagenesDefault.length];
+            
+            console.log(`📸 Producto ${p.nombre}: usando imagen ${img}`);
             
             const colDiv = document.createElement('div');
             colDiv.className = 'col-md-4 d-flex';
