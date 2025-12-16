@@ -1,10 +1,13 @@
 package com.tequila.ecommerce.vinoteca.controllers;
 
-import com.tequila.ecommerce.vinoteca.models.User; 
-import com.tequila.ecommerce.vinoteca.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.tequila.ecommerce.vinoteca.models.User;
+import com.tequila.ecommerce.vinoteca.services.UserService;
 
 @Controller
 public class RegistroController {
@@ -28,7 +31,8 @@ public class RegistroController {
         User user = new User();
         user.setNombre(username);
         user.setEmail(email);
-        user.setPassword(password);
+        // Encriptar la contraseña antes de guardar
+        user.setPassword(userService.encodePassword(password));
 
         userService.guardarUsuario(user);
 

@@ -34,6 +34,36 @@
         margin: auto;
         text-align: center;
       }
+      /* Asegurar visibilidad del contenido */
+      .table {
+        color: #333;
+        background-color: #fff;
+      }
+      .table thead.thead-primary {
+        background-color: #8B0000;
+        color: #fff;
+      }
+      .table tbody tr {
+        border-bottom: 1px solid #ddd;
+      }
+      .cart-total {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        color: #333;
+      }
+      .cart-total h3 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .total-price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+      }
+      .ftco-section {
+        background-color: #fff;
+      }
     </style>
   </head>
   <body>
@@ -42,10 +72,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-6 d-flex align-items-center">
-            <p class="mb-0 phone pl-md-2">
-              <a href="#" class="mr-2"><span class="fa fa-phone mr-1"></span> +54261000000</a>
-              <a href="#"><span class="fa fa-paper-plane mr-1"></span> salewine@email.com</a>
-            </p>
+            
           </div>
           <div class="col-md-6 d-flex justify-content-md-end">
             <div class="social-media mr-4">
@@ -70,13 +97,16 @@
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
       <div class="container">
         <a class="navbar-brand" href="index.html">Tienda de <span>Licores</span></a>
-        <div class="order-lg-last btn-group">
-          <a href="#" class="btn-cart dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="flaticon-shopping-bag"></span>
-            <div class="d-flex justify-content-center align-items-center"><small id="cart-count">0</small></div>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown">
-            <!-- Los items del carrito se cargarán dinámicamente aquí -->
+        <div class="order-lg-last d-flex align-items-center">
+          <div class="reg mr-3" style="display: inline-block;"></div>
+          <div class="btn-group">
+            <a href="#" class="btn-cart dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="flaticon-shopping-bag"></span>
+              <div class="d-flex justify-content-center align-items-center"><small id="cart-count">0</small></div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" id="cart-dropdown">
+              <!-- Los items del carrito se cargarán dinámicamente aquí -->
+            </div>
           </div>
         </div>
 
@@ -140,55 +170,41 @@
     <section class="ftco-section">
       <div class="container">
         <div class="row">
-          <div class="table-wrap">
-            <table class="table">
-              <thead class="thead-primary">
-                <tr>
-                  <th>&nbsp;</th>
-                  <th>&nbsp;</th>
-                  <th>Producto</th>
-                  <th>Precio</th>
-                  <th>Cantidad</th>
-                  <th>TOTAL</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody id="cart-items">
-                <!-- JS inyecta los productos acá -->
-              </tbody>
-            </table>
+          <div class="col-12">
+            <div class="table-wrap">
+              <table class="table">
+                <thead class="thead-primary">
+                  <tr>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>TOTAL</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody id="cart-items">
+                  <!-- JS inyecta los productos acá -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div class="row justify-content-end">
-          <div class="col col-lg-5 col-md-6 mt-5 cart-wrap ftco-animate">
-            <div class="cart-total mb-3">
-              <h3>TOTAL</h3>
-              <p class="d-flex">
-                <span>Subtotal</span>
-                <span id="subtotal">$0.00</span>
-              </p>
-              <p class="d-flex">
-                <span>Delivery</span>
-                <span>$0.00</span>
-              </p>
-              <p class="d-flex">
-                <span>Descuento</span>
-                <span>$0.00</span>
-              </p>
+        <div class="row justify-content-end mt-4">
+          <div class="col-lg-4 col-md-6">
+            <div class="cart-total">
+              <h3>TOTAL DEL CARRITO</h3>
               <hr />
               <p class="d-flex total-price">
                 <span>Total</span>
                 <span id="total">$0.00</span>
               </p>
+              <p class="text-center mt-4">
+                <a href="checkout.html" class="btn btn-primary py-3 px-4 w-100">PROCEDER A CHECKOUT</a>
+              </p>
             </div>
-            <p class="text-center">
-              <a href="checkout.html" class="btn btn-primary py-3 px-4">FINALIZAR COMPRA</a>
-            </p>
-            <!-- Botón para realizar compra directamente -->
-            <p class="text-center">
-              <button id="realizarCompraBtn" class="btn btn-success py-3 px-4">REALIZAR COMPRA</button>
-            </p>
           </div>
         </div>
       </div>
@@ -200,173 +216,9 @@
     <!-- Scripts -->
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-
-    <!-- SCRIPT PARA CARGAR EL CARRITO DESDE localStorage -->
-    <script>
-      function getCart() {
-        return JSON.parse(localStorage.getItem("carrito")) || [];
-      }
-
-      function saveCart(cart) {
-        localStorage.setItem("carrito", JSON.stringify(cart));
-      }
-
-      function formatPrice(price) {
-        return "$" + price.toFixed(2);
-      }
-
-      function renderCart() {
-        const cart = getCart();
-        const tbody = document.getElementById("cart-items");
-        tbody.innerHTML = "";
-
-        if (cart.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="text-center">No hay productos en el carrito.</td></tr>`;
-          document.getElementById("subtotal").innerText = "$0.00";
-          document.getElementById("total").innerText = "$0.00";
-          return;
-        }
-
-        let subtotal = 0;
-
-        cart.forEach((item, index) => {
-          const totalProduct = item.price * item.quantity;
-          subtotal += totalProduct;
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td></td>
-            <td><img src="${item.image}" width="50" /></td>
-            <td>${item.name}</td>
-            <td>${formatPrice(item.price)}</td>
-            <td><input type="number" min="1" value="${item.quantity}" data-index="${index}" class="form-control quantity-input"></td>
-            <td>${formatPrice(totalProduct)}</td>
-            <td><button class="btn btn-danger btn-sm btn-remove" data-index="${index}">X</button></td>
-          `;
-          tbody.appendChild(tr);
-        });
-
-        document.getElementById("subtotal").innerText = formatPrice(subtotal);
-        document.getElementById("total").innerText = formatPrice(subtotal); // Puedes sumar delivery o restar descuento aquí
-      }
-
-      // Función para enviar el pedido al backend
-      function realizarCompra() {
-        const cart = getCart();
-        if (cart.length === 0) {
-          alert("El carrito está vacío.");
-          return;
-        }
-
-        // Construir el objeto Order según tu modelo backend
-        const order = {
-          productos: cart, // Ajusta el nombre del campo según tu modelo Order
-          // Puedes agregar más campos si tu modelo lo requiere (usuario, fecha, etc.)
-        };
-
-        fetch('/pedido', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(order)
-        })
-        .then(response => {
-          if (response.ok) {
-            alert('¡Compra realizada con éxito!');
-            localStorage.removeItem('carrito');
-            renderCart();
-          } else {
-            alert('Error al realizar la compra.');
-          }
-        })
-        .catch(error => {
-          alert('Error de red al realizar la compra.');
-        });
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        renderCart();
-
-        document.getElementById("cart-items").addEventListener("input", (e) => {
-          if (e.target.classList.contains("quantity-input")) {
-            const index = e.target.dataset.index;
-            let cart = getCart();
-            let qty = parseInt(e.target.value);
-            if (qty < 1 || isNaN(qty)) qty = 1;
-            cart[index].quantity = qty;
-            saveCart(cart);
-            renderCart();
-          }
-        });
-
-        document.getElementById("cart-items").addEventListener("click", (e) => {
-          if (e.target.classList.contains("btn-remove")) {
-            const index = e.target.dataset.index;
-            let cart = getCart();
-            cart.splice(index, 1);
-            saveCart(cart);
-            renderCart();
-          }
-        });
-
-        // Evento para el botón de realizar compra
-        document.getElementById("realizarCompraBtn").addEventListener("click", realizarCompra);
-      });
-    </script>
-
-    <!-- SCRIPT PARA ACTUALIZAR EL CARRITO EN EL NAVBAR -->
-    <script>
-      function getCarritoNavbar() {
-        const carritoJSON = localStorage.getItem('carrito');
-        return carritoJSON ? JSON.parse(carritoJSON) : [];
-      }
-
-      function actualizarDropdownCarrito() {
-        const carrito = getCarritoNavbar();
-        const dropdown = document.getElementById('cart-dropdown');
-        const countBadge = document.getElementById('cart-count');
-        
-        if (!dropdown || !countBadge) return;
-        
-        // Actualizar el contador de items
-        countBadge.textContent = carrito.length;
-        
-        // Limpiar el dropdown
-        dropdown.innerHTML = '';
-        
-        if (carrito.length === 0) {
-          dropdown.innerHTML = '<div class="dropdown-item text-center">Carrito vacío</div>';
-        } else {
-          // Agregar cada item del carrito
-          carrito.forEach(item => {
-            const itemHTML = `
-              <div class="dropdown-item d-flex align-items-start">
-                <div class="img" style="background-image: url(${item.image});"></div>
-                <div class="text pl-3">
-                  <h4>${item.name}</h4>
-                  <p class="mb-0"><a href="#" class="price">$${item.price.toFixed(2)}</a><span class="quantity ml-3">Cantidad: ${String(item.cantidad).padStart(2, '0')}</span></p>
-                </div>
-              </div>
-            `;
-            dropdown.innerHTML += itemHTML;
-          });
-          
-          // Agregar botón "Ver Todo"
-          dropdown.innerHTML += `
-            <a class="dropdown-item text-center btn-link d-block w-100" href="cart.html">
-              Ver Todo
-              <span class="ion-ios-arrow-round-forward"></span>
-            </a>
-          `;
-        }
-      }
-
-      // Ejecutar cuando el DOM esté listo
-      document.addEventListener('DOMContentLoaded', actualizarDropdownCarrito);
-      
-      // Actualizar el carrito cada segundo (para sincronización entre pestañas)
-      setInterval(actualizarDropdownCarrito, 1000);
-    </script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth-topbar.js"></script>
+    
   </body>
 </html>
