@@ -28,6 +28,7 @@ public class ProductService {
 
     public Product createProduct(ProductDTO productDTO) {
         logger.info("📝 Creando producto: {}", productDTO.getNombre());
+        logger.info("📸 ImageUrl recibido: {}", productDTO.getImageUrl());
         
         Category category = categoryRepository.findById(productDTO.getCategoryId())
             .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
@@ -40,15 +41,20 @@ public class ProductService {
         product.setCategory(category);
         product.setImageUrl(productDTO.getImageUrl());
 
-        return productRepository.save(product);
+        Product saved = productRepository.save(product);
+        logger.info("✅ Producto guardado con ImageUrl: {}", saved.getImageUrl());
+        return saved;
     }
 
     public Product updateProduct(Long id, ProductDTO productDTO) {
         logger.info("📝 Actualizando producto ID: {}", id);
+        logger.info("📸 ImageUrl recibido para actualización: {}", productDTO.getImageUrl());
         
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
+        logger.info("📸 ImageUrl anterior: {}", product.getImageUrl());
+        
         product.setNombre(productDTO.getNombre());
         product.setDescripcion(productDTO.getDescripcion());
         product.setPrecio(productDTO.getPrecio());
@@ -61,7 +67,9 @@ public class ProductService {
             product.setCategory(category);
         }
 
-        return productRepository.save(product);
+        Product saved = productRepository.save(product);
+        logger.info("✅ Producto actualizado con ImageUrl: {}", saved.getImageUrl());
+        return saved;
     }
 
     public Product updateProductPrice(Long productId, Double newPrice) {
@@ -75,7 +83,18 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        logger.info("📦 Obteniendo todos los productos...");
+        List<Product> products = productRepository.findAll();
+        products.forEach(p -> logger.info("  📸 Producto: {} | ImageUrl: {}", p.getNombre(), p.getImageUrl()));
+        return products;
+    }
+
+    public Product getProductById(Long id) {
+        logger.info("🔍 Obteniendo producto ID: {}", id);
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+        logger.info("  📸 ImageUrl: {}", product.getImageUrl());
+        return product;
     }
 
     public void deleteProduct(Long productId) {

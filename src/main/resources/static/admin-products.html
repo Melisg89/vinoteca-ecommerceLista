@@ -71,7 +71,8 @@
                         <input type="number" class="form-control" id="stock" required>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <!-- Campo removido, ahora solo tipoBebida se usa como categoría -->
+                        <label>URL de Imagen</label>
+                        <input type="url" class="form-control" id="imagenUrl" placeholder="https://ejemplo.com/imagen.jpg">
                     </div>
                 </div>
 
@@ -348,7 +349,8 @@
                 descripcion: document.getElementById('descripcion').value,
                 precio: parseFloat(document.getElementById('precio').value),
                 stock: parseInt(document.getElementById('stock').value),
-                categoryId: categoryId
+                categoryId: categoryId,
+                imageUrl: document.getElementById('imagenUrl').value  // ✅ FIX: Send as imageUrl
             };
 
             const url = productId ? `${API_URL}/${productId}` : API_URL;
@@ -373,18 +375,42 @@
 
         function editarProducto(id) {
             const token = getToken();
+            console.log(`🔍 Editando producto ID: ${id}`);
+            
             fetch(`${API_URL}/${id}`, {
                 headers: { 'Authorization': 'Bearer ' + token }
             })
-            .then(res => res.json())
+            .then(res => {
+                console.log(`✅ Response status: ${res.status}`);
+                return res.json();
+            })
             .then(p => {
+                console.log(`📦 Producto recibido:`, p);
+                console.log(`📸 ImageUrl en respuesta: "${p.imageUrl}"`);
+                console.log(`📸 ImageUrl es nulo/undefined: ${p.imageUrl == null}`);
+                console.log(`📸 ImageUrl está vacío: ${!p.imageUrl || p.imageUrl.trim() === ''}`);
+                
                 document.getElementById('productId').value = p.id;
                 document.getElementById('nombre').value = p.nombre;
                 document.getElementById('descripcion').value = p.descripcion;
                 document.getElementById('precio').value = p.precio;
                 document.getElementById('stock').value = p.stock;
+                
+                // ✅ Mostrar logs para el imageUrl
+                const imageUrlField = document.getElementById('imagenUrl');
+                const imageUrlValue = p.imageUrl || '';
+                console.log(`🔧 Asignando imageUrl al campo: "${imageUrlValue}"`);
+                imageUrlField.value = imageUrlValue;
+                console.log(`✅ Campo imagenUrl ahora contiene: "${imageUrlField.value}"`);
+                
                 document.getElementById('tipoBebida').value = p.category?.id || '';
                 window.scrollTo(0, 0);
+                
+                console.log(`✅ Formulario completado para edición`);
+            })
+            .catch(e => {
+                console.error(`❌ Error editando producto:`, e);
+                alert('Error: ' + e);
             });
         }
 

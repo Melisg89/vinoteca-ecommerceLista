@@ -337,11 +337,11 @@
               return;
             }
             
-            // Tomar solo los primeros 8 productos
             const productosLimitados = productos.slice(0, 8);
             const imagenes = ['images/prod-1.jpg', 'images/prod-2.jpg', 'images/prod-3.jpg', 'images/prod-4.jpg', 'images/prod-5.jpg', 'images/prod-6.jpg', 'images/prod-7.jpg', 'images/prod-8.jpg'];
             
             productosLimitados.forEach((p, index) => {
+              // ✅ FIX: Use imageUrl (not imagenUrl)
               const img = (p.imageUrl && p.imageUrl.trim() !== '') ? p.imageUrl : imagenes[index % imagenes.length];
               
               const colDiv = document.createElement('div');
