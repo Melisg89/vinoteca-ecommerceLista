@@ -19,6 +19,95 @@
 
     <link rel="stylesheet" href="css/flaticon.css">
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- ESTILOS PARA FORZAR VISIBILIDAD DE PRODUCTOS -->
+    <style>
+      /* Remover hover effects */
+      #productosContainer .desc {
+        display: none !important;
+      }
+      
+      #productosContainer .meta-prod {
+        display: none !important;
+      }
+      
+      /* Forzar visibilidad de productos */
+      #productosContainer {
+        display: flex !important;
+        flex-wrap: wrap !important;
+      }
+      
+      #productosContainer .col-md-4 {
+        display: flex !important;
+        flex: 0 0 33.333% !important;
+        max-width: 33.333% !important;
+        padding: 15px !important;
+        visibility: visible !important;
+        min-height: 400px !important;
+      }
+      
+      #productosContainer .product {
+        display: flex !important;
+        flex-direction: column !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100% !important;
+        background: white !important;
+        border: 1px solid #ddd !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+      }
+      
+      #productosContainer .img {
+        display: block !important;
+        visibility: visible !important;
+        min-height: 250px !important;
+        background-size: cover !important;
+        background-position: center !important;
+        flex-shrink: 0 !important;
+      }
+      
+      #productosContainer .text {
+        display: block !important;
+        visibility: visible !important;
+        padding: 15px !important;
+        flex: 1 !important;
+        background: white !important;
+      }
+      
+      #productosContainer .category {
+        display: block !important;
+        visibility: visible !important;
+        font-size: 12px !important;
+        color: #999 !important;
+        margin-bottom: 8px !important;
+      }
+      
+      #productosContainer h2 {
+        display: block !important;
+        visibility: visible !important;
+        font-size: 16px !important;
+        margin: 8px 0 !important;
+        color: #000 !important;
+      }
+      
+      #productosContainer .price {
+        display: block !important;
+        visibility: visible !important;
+        font-size: 18px !important;
+        color: #F96D00 !important;
+        font-weight: bold !important;
+        margin: 10px 0 !important;
+      }
+      
+      #productosContainer .btn {
+        display: block !important;
+        visibility: visible !important;
+        width: 100% !important;
+        padding: 10px !important;
+        margin-top: auto !important;
+      }
+    </style>
   </head>
   <body>
 
@@ -96,219 +185,43 @@
     </section>
 
   <section class="ftco-section">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-9">
-        <div class="row mb-4">
-          <div class="col-md-12 d-flex justify-content-between align-items-center">
-            <h4 class="product-select">Seleccione los productos</h4>
-            <select class="selectpicker" multiple>
-              <option>Brandy</option>
-              <option>Gin</option>
-              <option>Ron</option>
-              <option>Tequila</option>
-              <option>Vodka</option>
-              <option>Whiskey</option>
-            </select>
-          </div>
-        </div>
-
+      <div class="container">
         <div class="row">
+          <div class="col-md-9">
+            <div class="row mb-4">
+              <div class="col-md-12 d-flex justify-content-between align-items-center">
+                <h4 class="product-select">Seleccione los productos</h4>
+                <select class="selectpicker" multiple>
+                  <option>Brandy</option>
+                  <option>Gin</option>
+                  <option>Ron</option>
+                  <option>Tequila</option>
+                  <option>Vodka</option>
+                  <option>Whiskey</option>
+                </select>
+              </div>
+            </div>
 
-          <!-- PRODUCTO 1 -->
-          <div class="col-md-4 d-flex">
-            <div class="product ftco-animate">
-              <div class="img d-flex align-items-center justify-content-center" style="background-image: url(images/prod-1.jpg);">
-                <div class="desc">
-                  <p class="meta-prod d-flex">
-                    <a href="#" class="d-flex align-items-center justify-content-center"><span class="flaticon-shopping-bag"></span></a>
-                    <a href="#" class="d-flex align-items-center justify-content-center"><span class="flaticon-heart"></span></a>
-                    <a href="#" class="d-flex align-items-center justify-content-center"><span class="flaticon-visibility"></span></a>
-                  </p>
-                </div>
-              </div>
-              <div class="text text-center">
-                <span class="sale">Promoción</span>
-                <span class="category">Brandy</span>
-                <h2>Bacardi 151</h2>
-                <p class="mb-0"><span class="price price-sale">$69.00</span> <span class="price">$49.00</span></p>
-                <button 
-                  class="btn btn-primary add-to-cart-btn" 
-                  data-id="1" 
-                  data-name="Bacardi 151" 
-                  data-price="49.00"
-                  data-image="images/prod-1.jpg">
-                  Agregar al carrito
-                </button>
-              </div>
+            <div class="row" id="productosContainer">
+              <!-- Los productos se cargarán aquí dinámicamente -->
             </div>
           </div>
 
-          <!-- PRODUCTO 2 -->
-          <div class="col-md-4 d-flex">
-            <div class="product ftco-animate">
-              <div class="img d-flex align-items-center justify-content-center" style="background-image: url(images/prod-2.jpg);">
-                <div class="desc">
-                  <p class="meta-prod d-flex">
-                    <a href="#" class="d-flex align-items-center justify-content-center"><span class="flaticon-shopping-bag"></span></a>
-                    <a href="#" class="d-flex align-items-center justify-content-center"><span class="flaticon-heart"></span></a>
-                    <a href="#" class="d-flex align-items-center justify-content-center"><span class="flaticon-visibility"></span></a>
-                  </p>
-                </div>
-              </div>
-              <div class="text text-center">
-                <span class="seller">Destacado</span>
-                <span class="category">Gin</span>
-                <h2>Jim Beam Kentucky Straight</h2>
-                <span class="price">$69.00</span>
-                <button 
-                  class="btn btn-primary add-to-cart-btn" 
-                  data-id="2" 
-                  data-name="Jim Beam Kentucky Straight" 
-                  data-price="69.00"
-                  data-image="images/prod-2.jpg">
-                  Agregar al carrito
-                </button>
+          <!-- SIDEBAR -->
+          <div class="col-md-3">
+            <div class="sidebar-box ftco-animate">
+              <div class="categories">
+                <h3>Nuestros productos:</h3>
+                <ul class="p-0">
+                  <li><a href="#">Brandy <span class="fa fa-chevron-right"></span></a></li>
+                  <li><a href="#">Gin <span class="fa fa-chevron-right"></span></a></li>
+                  <li><a href="#">Ron <span class="fa fa-chevron-right"></span></a></li>
+                  <li><a href="#">Tequila <span class="fa fa-chevron-right"></span></a></li>
+                  <li><a href="#">Vodka <span class="fa fa-chevron-right"></span></a></li>
+                  <li><a href="#">Whiskey <span class="fa fa-chevron-right"></span></a></li>
+                </ul>
               </div>
             </div>
-          </div>
-
-          <!-- PRODUCTO 3 -->
-          <div class="col-md-4 d-flex">
-            <div class="product ftco-animate">
-              <div class="img d-flex align-items-center justify-content-center" style="background-image: url(images/prod-3.jpg);">
-                <div class="desc">
-                  <p class="meta-prod d-flex">
-                    <a href="#" class="d-flex align-items-center justify-content-center"><span class="flaticon-shopping-bag"></span></a>
-                    <a href="#" class="d-flex align-items-center justify-content-center"><span class="flaticon-heart"></span></a>
-                    <a href="#" class="d-flex align-items-center justify-content-center"><span class="flaticon-visibility"></span></a>
-                  </p>
-                </div>
-              </div>
-              <div class="text text-center">
-                <span class="new">Recién llegado</span>
-                <span class="category">Ron</span>
-                <h2>Citadelle</h2>
-                <span class="price">$69.00</span>
-                <button 
-                  class="btn btn-primary add-to-cart-btn" 
-                  data-id="3" 
-                  data-name="Citadelle" 
-                  data-price="69.00"
-                  data-image="images/prod-3.jpg">
-                  Agregar al carrito
-                </button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- SIDEBAR -->
-      <div class="col-md-3">
-        <div class="sidebar-box ftco-animate">
-          <div class="categories">
-            <h3>Nuestros productos:</h3>
-            <ul class="p-0">
-              <li><a href="#">Brandy <span class="fa fa-chevron-right"></span></a></li>
-              <li><a href="#">Gin <span class="fa fa-chevron-right"></span></a></li>
-              <li><a href="#">Ron <span class="fa fa-chevron-right"></span></a></li>
-              <li><a href="#">Tequila <span class="fa fa-chevron-right"></span></a></li>
-              <li><a href="#">Vodka <span class="fa fa-chevron-right"></span></a></li>
-              <li><a href="#">Whiskey <span class="fa fa-chevron-right"></span></a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SCRIPT PARA CARRITO -->
-    <script>
-  function getCarrito() {
-    const carritoJSON = localStorage.getItem('carrito');
-    return carritoJSON ? JSON.parse(carritoJSON) : [];
-  }
-
-  function guardarCarrito(carrito) {
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-  }
-
-  function actualizarDropdownCarrito() {
-    const carrito = getCarrito();
-    const dropdown = document.getElementById('cart-dropdown');
-    const countBadge = document.getElementById('cart-count');
-    
-    // Actualizar el contador de items
-    countBadge.textContent = carrito.length;
-    
-    // Limpiar el dropdown
-    dropdown.innerHTML = '';
-    
-    if (carrito.length === 0) {
-      dropdown.innerHTML = '<div class="dropdown-item text-center">Carrito vacío</div>';
-    } else {
-      // Agregar cada item del carrito
-      carrito.forEach(item => {
-        const itemHTML = `
-          <div class="dropdown-item d-flex align-items-start">
-            <div class="img" style="background-image: url(${item.image});"></div>
-            <div class="text pl-3">
-              <h4>${item.name}</h4>
-              <p class="mb-0"><a href="#" class="price">$${item.price.toFixed(2)} c/u</a><span class="quantity ml-3">Cantidad: ${String(item.cantidad).padStart(2, '0')}</span></p>
-            </div>
-          </div>
-        `;
-        dropdown.innerHTML += itemHTML;
-      });
-      
-      // Agregar botón "Ver Todo"
-      dropdown.innerHTML += `
-        <a class="dropdown-item text-center btn-link d-block w-100" href="cart.html">
-          Ver Todo
-          <span class="ion-ios-arrow-round-forward"></span>
-        </a>
-      `;
-    }
-  }
-
-  function agregarAlCarrito(producto) {
-    const carrito = getCarrito();
-    const index = carrito.findIndex(p => p.id === producto.id);
-    if (index !== -1) {
-      carrito[index].cantidad += 1;
-    } else {
-      producto.cantidad = 1;
-      carrito.push(producto);
-    }
-    guardarCarrito(carrito);
-    actualizarDropdownCarrito();
-    alert(`Se agregó "${producto.name}" al carrito.`);
-  }
-
-  // Ejecutar después de que el DOM esté cargado
-  window.addEventListener('DOMContentLoaded', () => {
-    // Inicializar el dropdown del carrito
-    actualizarDropdownCarrito();
-    
-    // Agregar listeners a los botones de "Agregar al carrito"
-    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const producto = {
-          id: parseInt(btn.getAttribute('data-id')),
-          name: btn.getAttribute('data-name'),
-          price: parseFloat(btn.getAttribute('data-price')),
-          image: btn.getAttribute('data-image')
-        };
-        agregarAlCarrito(producto);
-      });
-    });
-  });
-</script>
-  </div>
-</section>
-
-
 
             <div class="sidebar-box ftco-animate">
               <h3>Blog reciente</h3>
@@ -343,10 +256,10 @@
                 </div>
               </div>
             </div>
-					</div>
-				</div>
-			</div>
-		</section>
+          </div>
+        </div>
+      </div>
+    </section>
 
 		<footer class="ftco-footer">
 		      <div class="container">
@@ -446,6 +359,77 @@
   <script src="js/main.js"></script>
   <script src="js/auth-topbar.js"></script>
   <script src="js/admin-navbar.js"></script>
+  
+  <!-- SCRIPT PARA CARGAR PRODUCTOS DINÁMICAMENTE - AL FINAL -->
+  <script>
+    console.log('✅ Script de productos iniciado');
+    
+    function cargarProductosDinamicos() {
+      console.log('🔄 Buscando contenedor...');
+      const container = document.getElementById('productosContainer');
+      console.log('📦 Contenedor encontrado:', !!container);
+      
+      if (!container) {
+        console.error('❌ NO ENCONTRÉ EL CONTENEDOR');
+        return;
+      }
+      
+      fetch('http://localhost:8081/api/products')
+        .then(res => res.json())
+        .then(productos => {
+          console.log('✅ Datos recibidos:', productos.length, 'productos');
+          
+          container.innerHTML = '';
+          const imagenes = ['images/prod-1.jpg', 'images/prod-2.jpg', 'images/prod-3.jpg', 'images/prod-4.jpg'];
+          
+          productos.forEach((p, i) => {
+            const img = imagenes[i % imagenes.length];
+            
+            const colDiv = document.createElement('div');
+            colDiv.className = 'col-md-4 d-flex';
+            
+            const html = `
+              <div class="product ftco-animate">
+                <div class="img" style="background-image: url('${img}');"></div>
+                <div class="text text-center">
+                  <span class="category">${p.category?.name || 'Licor'}</span>
+                  <h2>${p.nombre}</h2>
+                  <p class="mb-0"><span class="price">$${parseFloat(p.precio).toFixed(2)}</span></p>
+                  <button class="btn btn-primary" onclick="agregarAlCarrito({id: ${p.id}, name: '${p.nombre}', price: ${p.precio}, image: '${img}'})">
+                    Agregar al carrito
+                  </button>
+                </div>
+              </div>
+            `;
+            
+            colDiv.innerHTML = html;
+            container.appendChild(colDiv);
+          });
+          
+          console.log('✅ Productos cargados visualmente');
+        })
+        .catch(e => console.error('❌ Error:', e));
+    }
+
+    function agregarAlCarrito(producto) {
+      const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+      const existe = carrito.find(p => p.id === producto.id);
+      
+      if (existe) {
+        existe.cantidad++;
+      } else {
+        producto.cantidad = 1;
+        carrito.push(producto);
+      }
+      
+      localStorage.setItem('carrito', JSON.stringify(carrito));
+      console.log('✅ Producto agregado:', producto.name);
+      alert(`✅ Agregado: ${producto.name}`);
+    }
+
+    // Cargar cuando TODO esté listo
+    setTimeout(cargarProductosDinamicos, 500);
+  </script>
     
   </body>
 </html>
