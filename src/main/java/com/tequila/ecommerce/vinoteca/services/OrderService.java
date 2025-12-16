@@ -17,6 +17,7 @@ import com.tequila.ecommerce.vinoteca.models.Order;
 import com.tequila.ecommerce.vinoteca.models.OrderItem;
 import com.tequila.ecommerce.vinoteca.models.Product;
 import com.tequila.ecommerce.vinoteca.models.User;
+import com.tequila.ecommerce.vinoteca.repository.OrderItemRepository;
 import com.tequila.ecommerce.vinoteca.repository.OrderRepository;
 import com.tequila.ecommerce.vinoteca.repository.ProductRepository;
 import com.tequila.ecommerce.vinoteca.repository.UserRepository;
@@ -34,6 +35,9 @@ public class OrderService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
     public Order createOrderFromDTO(OrderDTO orderDTO) {
         // Validar que la orden tenga items
@@ -130,11 +134,11 @@ public class OrderService {
             order.setEstado("PENDIENTE");
             order.setFechaCreacion(LocalDateTime.now());
             
-            // PRIMERO guardar la orden sin items
+            // ✅ PASO 1: Guardar la orden primero
             Order savedOrder = orderRepository.save(order);
             logger.info("✅ Orden guardada con ID: {}", savedOrder.getId());
             
-            // Convertir OrderItemDTO a OrderItem y asociarlos a la orden ya guardada
+            // ✅ PASO 2: Crear y guardar los OrderItems
             List<OrderItem> processedItems = new ArrayList<>();
             for (OrderItemDTO itemDTO : orderDTO.getItems()) {
                 if (itemDTO.getProduct() == null || itemDTO.getProduct().getId() == null) {
@@ -145,21 +149,21 @@ public class OrderService {
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + itemDTO.getProduct().getId()));
                 
                 OrderItem item = new OrderItem();
-                item.setOrder(savedOrder);
+                item.setOrder(savedOrder); // ✅ Asociar a la orden guardada
                 item.setProduct(product);
                 item.setQuantity(itemDTO.getQuantity() != null && itemDTO.getQuantity() > 0 ? itemDTO.getQuantity() : 1);
                 item.setPrice(itemDTO.getPrice() != null && itemDTO.getPrice() > 0 ? itemDTO.getPrice() : product.getPrice().doubleValue());
                 
-                processedItems.add(item);
-                logger.info("✅ Item agregado: {} - Cantidad: {}", product.getName(), item.getQuantity());
+                // ✅ Guardar el OrderItem inmediatamente
+                OrderItem savedItem = orderItemRepository.save(item);
+                processedItems.add(savedItem);
+                logger.info("✅ OrderItem guardado: {} - Cantidad: {}", product.getName(), savedItem.getQuantity());
             }
             
-            // Guardar los items
-            if (!processedItems.isEmpty()) {
-                savedOrder.setItems(processedItems);
-                savedOrder = orderRepository.save(savedOrder);
-                logger.info("✅ {} items guardados para la orden {}", processedItems.size(), savedOrder.getId());
-            }
+            // ✅ PASO 3: Actualizar la orden con los items
+            savedOrder.setItems(processedItems);
+            savedOrder = orderRepository.save(savedOrder);
+            logger.info("✅ {} OrderItems asociados a la orden {}", processedItems.size(), savedOrder.getId());
             
             logger.info("✅ Orden creada exitosamente con ID: {}", savedOrder.getId());
             

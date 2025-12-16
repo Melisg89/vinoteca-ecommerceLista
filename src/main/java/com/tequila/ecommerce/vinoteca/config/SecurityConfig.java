@@ -1,36 +1,85 @@
 package com.tequila.ecommerce.vinoteca.config;
 
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.tequila.ecommerce.vinoteca.security.JwtAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/", "/index.html", "/about.html", "/product.html", "/product-single.html",
-                    "/cart.html", "/blog.html", "/contact.html", "/checkout.html", // checkout.html es público
-                    "/js/**", "/css/**", "/images/**",
-                    "/api/products/**", "/api/categoria/**", "/api/auth/**", "/register", "/login"
-                ).permitAll()
-                .requestMatchers("/checkout", "/checkout/**").authenticated() // Solo el endpoint REST requiere login
-                .anyRequest().permitAll()
-            )
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable());
-        return http.build();
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+        http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                // ✅ Rutas públicas - Archivos HTML y estáticos
+                .requestMatchers(
+                    "/", 
+                    "/index.html", 
+                    "/about.html", 
+                    "/product.html", 
+                    "/product-single.html",
+                    "/cart.html", 
+                    "/checkout.html",  // ✅ Permitir acceso a checkout.html
+                    "/blog.html", 
+                    "/blog-single.html",
+                    "/contact.html", 
+                    "/login.html",
+                    "/register.html",
+                    "/js/**", 
+                    "/css/**", 
+                    "/images/**",
+                    "/fonts/**"
+                ).permitAll()
+                
+                // ✅ APIs públicas de autenticación
+                .requestMatchers("/api/auth/**", "/api/products/**", "/api/categoria/**").permitAll()
+                
+                // ✅ APIs protegidas - Solo este endpoint requiere JWT
+                .requestMatchers("/api/checkout").authenticated()
+                .requestMatchers("/api/orders/**").authenticated()
+                
+                // ❌ Todo lo demás requiere autenticación
+                .anyRequest().authenticated()
+            )
+            .httpBasic(basic -> basic.disable())
+            .formLogin(form -> form.disable())
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081", "http://localhost:3000"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

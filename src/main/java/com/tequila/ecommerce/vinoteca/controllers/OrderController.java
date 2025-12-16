@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -131,48 +131,25 @@ public class OrderController {
     @PostMapping("/checkout")
     public ResponseEntity<?> checkout(
         @RequestBody OrderDTO orderDTO,
-        @RequestHeader(value = "Authorization", required = false) String authHeader
+        Authentication authentication
     ) {
         try {
             logger.info("📍 Recibido checkout request");
-            logger.info("🔑 Authorization header: {}", authHeader != null ? authHeader.substring(0, Math.min(30, authHeader.length())) + "..." : "NULL");
             
-            // Validar que la orden tenga items
             if (orderDTO == null || orderDTO.getItems() == null || orderDTO.getItems().isEmpty()) {
                 logger.warn("⚠️ Carrito vacío");
                 return ResponseEntity.badRequest().body("{\"message\": \"Carrito vacío\"}");
             }
             
-            // Obtener el token del header
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                logger.error("❌ Header Authorization no presente o formato inválido");
+            // ✅ Usar Spring Security Authentication
+            if (authentication == null || !authentication.isAuthenticated()) {
+                logger.error("❌ Usuario no autenticado");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"message\": \"Token no proporcionado\"}");
+                    .body("{\"message\": \"Usuario no autenticado\"}");
             }
             
-            String token = authHeader.substring(7); // Quita "Bearer "
-            logger.info("✅ Token extraído: {}", token.substring(0, Math.min(20, token.length())) + "...");
-            
-            // Validar el token
-            if (!jwtUtil.validateToken(token)) {
-                logger.error("❌ Token inválido");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"message\": \"Token inválido\"}");
-            }
-            
-            // Obtener el userId del token
-            Long userId = jwtUtil.getUserIdFromToken(token);
-            logger.info("✅ UserId extraído del token: {}", userId);
-            
-            // Obtener el usuario de la BD
-            User user = userService.getUserById(userId);
-            if (user == null) {
-                logger.error("❌ Usuario no encontrado: {}", userId);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"message\": \"Usuario no encontrado\"}");
-            }
-            
-            logger.info("✅ Usuario encontrado: {}", user.getEmail());
+            User user = (User) authentication.getPrincipal();
+            logger.info("✅ Usuario autenticado: {}", user.getEmail());
             logger.info("✅ Validación pasada, creando orden...");
             
             // Crear la orden
@@ -180,7 +157,6 @@ public class OrderController {
             
             logger.info("✅ Orden creada exitosamente con ID: {}", result.getId());
             
-            // Retornar solo el ID de la orden en lugar del objeto completo
             return ResponseEntity.ok(new java.util.HashMap<String, Object>() {{
                 put("id", result.getId());
                 put("message", "Orden creada exitosamente");
