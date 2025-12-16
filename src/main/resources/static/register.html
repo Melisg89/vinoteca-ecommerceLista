@@ -20,7 +20,7 @@
 <body>
   <div class="container mt-5">
   <h2 class="text-center mb-4">Registrarse</h2>
-  <form method="POST" action="/registro">
+  <form id="registerForm">
     <div class="form-group">
       <label for="username">Usuario:</label>
       <input type="text" id="username" name="username" class="form-control" required />
@@ -37,6 +37,30 @@
   </form>
 </div>
 
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const nombre = document.getElementById('username').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  const response = await fetch('/api/auth/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, email, password })
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    // Guarda el token en localStorage
+    localStorage.setItem('jwt', data.token);
+    // Redirige al checkout o a la página principal
+    window.location.href = 'checkout.html';
+  } else {
+    alert('Error al registrar usuario. Intenta con otro email.');
+  }
+});
+</script>
 
 </body>
 </html>

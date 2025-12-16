@@ -20,6 +20,26 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public String encodePassword(String rawPassword) {
+        return passwordEncoder.encode(rawPassword);
+    }
+
+    public User registerUser(String nombre, String email, String password, User.Role role) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("El email ya está registrado");
+        }
+
+        User user = new User();
+        user.setNombre(nombre);
+        user.setEmail(email);
+        // Asegura que la contraseña se encripte aquí SIEMPRE
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRole(role != null ? role : User.Role.CLIENTE);
+        user.setEnabled(true);
+
+        return userRepository.save(user);
+    }
+
     @Transactional(readOnly = true)
     public List<User> obtenerTodosLosUsuarios() {
         return userRepository.findAll();
@@ -44,21 +64,6 @@ public class UserService {
     public User encontrarPorEmail(String email) {
         // Corregido: obtener el User del Optional o retornar null si no existe
         return userRepository.findByEmail(email).orElse(null);
-    }
-
-    public User registerUser(String nombre, String email, String password, User.Role role) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("El email ya está registrado");
-        }
-
-        User user = new User();
-        user.setNombre(nombre);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRole(role != null ? role : User.Role.CLIENTE);
-        user.setEnabled(true);
-
-        return userRepository.save(user);
     }
 
     public Optional<User> findByEmail(String email) {

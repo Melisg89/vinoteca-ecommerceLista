@@ -2,6 +2,8 @@ package com.tequila.ecommerce.vinoteca.controllers;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,6 @@ import com.tequila.ecommerce.vinoteca.dto.LoginDTO;
 import com.tequila.ecommerce.vinoteca.models.User;
 import com.tequila.ecommerce.vinoteca.security.JwtUtil;
 import com.tequila.ecommerce.vinoteca.services.UserService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,12 +36,21 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody Map<String, String> request) {
         try {
             String nombre = request.get("nombre");
-            String email = request.get("email");
+            String email = request.get("email").trim().toLowerCase();
             String password = request.get("password");
             String roleStr = request.getOrDefault("role", "CLIENTE");
 
             User.Role role = User.Role.valueOf(roleStr.toUpperCase());
-            User user = userService.registerUser(nombre, email, password, role);
+
+            // Verificar si el email ya está registrado
+            if (userService.findByEmail(email).isPresent()) {
+                return ResponseEntity.badRequest().body("{\"message\": \"El email ya está registrado\"}");
+            }
+
+            // Encriptar la contraseña antes de guardar
+            String encodedPassword = userService.encodePassword(password);
+
+            User user = userService.registerUser(nombre, email, encodedPassword, role);
 
             String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole().toString());
             return ResponseEntity.ok(new AuthResponseDTO(token, user.getId(), user.getEmail(), user.getRole().toString()));
