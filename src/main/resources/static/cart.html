@@ -34,6 +34,36 @@
         margin: auto;
         text-align: center;
       }
+      /* Asegurar visibilidad del contenido */
+      .table {
+        color: #333;
+        background-color: #fff;
+      }
+      .table thead.thead-primary {
+        background-color: #8B0000;
+        color: #fff;
+      }
+      .table tbody tr {
+        border-bottom: 1px solid #ddd;
+      }
+      .cart-total {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        color: #333;
+      }
+      .cart-total h3 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .total-price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+      }
+      .ftco-section {
+        background-color: #fff;
+      }
     </style>
   </head>
   <body>
@@ -42,10 +72,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-6 d-flex align-items-center">
-            <p class="mb-0 phone pl-md-2">
-              <a href="#" class="mr-2"><span class="fa fa-phone mr-1"></span> +54261000000</a>
-              <a href="#"><span class="fa fa-paper-plane mr-1"></span> salewine@email.com</a>
-            </p>
+            
           </div>
           <div class="col-md-6 d-flex justify-content-md-end">
             <div class="social-media mr-4">
@@ -140,55 +167,41 @@
     <section class="ftco-section">
       <div class="container">
         <div class="row">
-          <div class="table-wrap">
-            <table class="table">
-              <thead class="thead-primary">
-                <tr>
-                  <th>&nbsp;</th>
-                  <th>&nbsp;</th>
-                  <th>Producto</th>
-                  <th>Precio</th>
-                  <th>Cantidad</th>
-                  <th>TOTAL</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody id="cart-items">
-                <!-- JS inyecta los productos acá -->
-              </tbody>
-            </table>
+          <div class="col-12">
+            <div class="table-wrap">
+              <table class="table">
+                <thead class="thead-primary">
+                  <tr>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>TOTAL</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody id="cart-items">
+                  <!-- JS inyecta los productos acá -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div class="row justify-content-end">
-          <div class="col col-lg-5 col-md-6 mt-5 cart-wrap ftco-animate">
-            <div class="cart-total mb-3">
-              <h3>TOTAL</h3>
-              <p class="d-flex">
-                <span>Subtotal</span>
-                <span id="subtotal">$0.00</span>
-              </p>
-              <p class="d-flex">
-                <span>Delivery</span>
-                <span>$0.00</span>
-              </p>
-              <p class="d-flex">
-                <span>Descuento</span>
-                <span>$0.00</span>
-              </p>
+        <div class="row justify-content-end mt-4">
+          <div class="col-lg-4 col-md-6">
+            <div class="cart-total">
+              <h3>TOTAL DEL CARRITO</h3>
               <hr />
               <p class="d-flex total-price">
                 <span>Total</span>
                 <span id="total">$0.00</span>
               </p>
+              <p class="text-center mt-4">
+                <a href="checkout.html" class="btn btn-primary py-3 px-4 w-100">PROCEDER A CHECKOUT</a>
+              </p>
             </div>
-            <p class="text-center">
-              <a href="checkout.html" class="btn btn-primary py-3 px-4">FINALIZAR COMPRA</a>
-            </p>
-            <!-- Botón para realizar compra directamente -->
-            <p class="text-center">
-              <button id="realizarCompraBtn" class="btn btn-success py-3 px-4">REALIZAR COMPRA</button>
-            </p>
           </div>
         </div>
       </div>
@@ -218,19 +231,20 @@
       function renderCart() {
         const cart = getCart();
         const tbody = document.getElementById("cart-items");
+        const totalElement = document.getElementById("total");
         tbody.innerHTML = "";
 
         if (cart.length === 0) {
           tbody.innerHTML = `<tr><td colspan="7" class="text-center">No hay productos en el carrito.</td></tr>`;
-          document.getElementById("subtotal").innerText = "$0.00";
-          document.getElementById("total").innerText = "$0.00";
+          if (totalElement) totalElement.innerText = "$0.00";
           return;
         }
 
         let subtotal = 0;
 
         cart.forEach((item, index) => {
-          const totalProduct = item.price * item.quantity;
+          const qty = item.cantidad || item.quantity || 1;
+          const totalProduct = item.price * qty;
           subtotal += totalProduct;
 
           const tr = document.createElement("tr");
@@ -239,15 +253,14 @@
             <td><img src="${item.image}" width="50" /></td>
             <td>${item.name}</td>
             <td>${formatPrice(item.price)}</td>
-            <td><input type="number" min="1" value="${item.quantity}" data-index="${index}" class="form-control quantity-input"></td>
+            <td><input type="number" min="1" value="${qty}" data-index="${index}" class="form-control quantity-input"></td>
             <td>${formatPrice(totalProduct)}</td>
             <td><button class="btn btn-danger btn-sm btn-remove" data-index="${index}">X</button></td>
           `;
           tbody.appendChild(tr);
         });
 
-        document.getElementById("subtotal").innerText = formatPrice(subtotal);
-        document.getElementById("total").innerText = formatPrice(subtotal); // Puedes sumar delivery o restar descuento aquí
+        if (totalElement) totalElement.innerText = formatPrice(subtotal);
       }
 
       // Función para enviar el pedido al backend
@@ -294,7 +307,7 @@
             let cart = getCart();
             let qty = parseInt(e.target.value);
             if (qty < 1 || isNaN(qty)) qty = 1;
-            cart[index].quantity = qty;
+            cart[index].cantidad = qty;
             saveCart(cart);
             renderCart();
           }
@@ -309,9 +322,6 @@
             renderCart();
           }
         });
-
-        // Evento para el botón de realizar compra
-        document.getElementById("realizarCompraBtn").addEventListener("click", realizarCompra);
       });
     </script>
 

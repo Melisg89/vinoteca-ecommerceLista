@@ -26,10 +26,7 @@
 				<div class="container">
 					<div class="row">
 						<div class="col-md-6 d-flex align-items-center">
-							<p class="mb-0 phone pl-md-2">
-								<a href="#" class="mr-2"><span class="fa fa-phone mr-1"></span> +54261000000/a</a> 
-								<a href="#"><span class="fa fa-paper-plane mr-1"></span> salewine@email.com</a>
-							</p>
+							<!-- ...existing code... -->
 						</div>
 						<div class="col-md-6 d-flex justify-content-md-end">
 							<div class="social-media mr-4">
@@ -40,7 +37,6 @@
 				    			<a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-dribbble"><i class="sr-only">Dribbble</i></span></a>
 				    		</p>
 			        </div>
-			        
 						</div>
 					</div>
 				</div>
@@ -136,7 +132,7 @@
     <div class="row justify-content-center">
       <div class="col-xl-10 ftco-animate">
         <form id="checkout-form" class="billing-form">
-          <h3 class="mb-4 billing-heading">Detalles de facturación</h3>
+          <h3 class="mb-4 billing-heading">Detalles de Entrega</h3>
 
           <div class="row align-items-end">
             <!-- Nombre -->
@@ -224,11 +220,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Botón finalizar compra -->
-            <div class="col-md-12">
-              <button type="submit" class="btn btn-primary">Finalizar Compra</button>
-            </div>
           </div>
         </form>
       </div>
@@ -238,7 +229,12 @@
     <div class="row mt-5 pt-3 d-flex">
       <div class="col-md-6 d-flex">
         <div class="cart-detail cart-total p-3 p-md-4">
-          <h3 class="billing-heading mb-4">TOTAL de la compra</h3>
+          <h3 class="billing-heading mb-4">Resumen de Productos</h3>
+          <div id="productos-resumen" style="max-height: 300px; overflow-y: auto;">
+            <!-- Los productos se cargarán aquí dinámicamente -->
+          </div>
+          <hr />
+          <h3 class="billing-heading mb-4 mt-4">TOTAL de la compra</h3>
           <p class="d-flex">
             <span>Subtotal</span>
             <span id="subtotal">$0.00</span>
@@ -246,10 +242,6 @@
           <p class="d-flex">
             <span>Delivery</span>
             <span>$0.00</span>
-          </p>
-          <p class="d-flex">
-            <span>Descuento</span>
-            <span id="descuento">-$0.00</span>
           </p>
           <hr />
           <p class="d-flex total-price">
@@ -283,6 +275,11 @@
               </div>
             </div>
           </div>
+          
+          <!-- Botón finalizar compra -->
+          <div class="mt-4">
+            <button type="submit" form="checkout-form" class="btn btn-primary w-100">Finalizar Compra</button>
+          </div>
         </div>
       </div>
     </div>
@@ -292,11 +289,42 @@
 <script>
   function calcularTotal() {
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    const subtotal = carrito.reduce((acc, p) => acc + (p.price ? p.price : p.precio) * (p.quantity ? p.quantity : 1), 0);
-    const descuento = 3.00;
-    const total = subtotal - descuento;
+    const resumenContainer = document.getElementById("productos-resumen");
+    
+    // Limpiar resumen anterior
+    resumenContainer.innerHTML = "";
+    
+    if (carrito.length === 0) {
+      resumenContainer.innerHTML = '<p class="text-center text-muted">No hay productos</p>';
+      document.getElementById("subtotal").innerText = "$0.00";
+      document.getElementById("descuento").innerText = "-$0.00";
+      document.getElementById("total").innerText = "$0.00";
+      return;
+    }
+    
+    let subtotal = 0;
+    
+    // Renderizar cada producto
+    carrito.forEach(item => {
+      const cantidad = item.cantidad || item.quantity || 1;
+      const totalProducto = item.price * cantidad;
+      subtotal += totalProducto;
+      
+      const productoHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-3" style="border-bottom: 1px solid #eee;">
+          <div>
+            <p class="mb-1"><strong>${item.name}</strong></p>
+            <p class="mb-0 text-muted small">$${item.price.toFixed(2)} x ${cantidad}</p>
+          </div>
+          <p class="mb-0"><strong>$${totalProducto.toFixed(2)}</strong></p>
+        </div>
+      `;
+      
+      resumenContainer.innerHTML += productoHTML;
+    });
+    
+    const total = subtotal;
     document.getElementById("subtotal").innerText = `$${subtotal.toFixed(2)}`;
-    document.getElementById("descuento").innerText = `-$${descuento.toFixed(2)}`;
     document.getElementById("total").innerText = `$${total.toFixed(2)}`;
   }
 
@@ -315,18 +343,43 @@
       return;
     }
 
-    // Construir el objeto Order con items (OrderItem)
+    // Obtener el método de pago seleccionado
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+    if (!paymentMethod) {
+      alert("Debe seleccionar un método de pago.");
+      return;
+    }
+
+    // Calcular el total
+    const subtotal = carrito.reduce((acc, p) => acc + (p.price * (p.cantidad || p.quantity || 1)), 0);
+
+    // Construir el objeto Order completo
     const userId = 1; // Reemplazar con el id real del usuario autenticado
     const items = carrito.map(p => ({
       product: { id: p.id },
-      quantity: p.quantity || 1
+      quantity: parseInt(p.cantidad || p.quantity || 1),
+      price: parseFloat(p.price)
     }));
+
+    console.log("Items a enviar:", items); // Debug
+    console.log("Cantidad de items:", items.length); // Debug
 
     const order = {
       user: { id: userId },
-      items: items
-      // Puedes agregar más campos si tu modelo Order los requiere (dirección, email, etc.)
+      items: items,
+      firstname: document.getElementById("firstname").value,
+      lastname: document.getElementById("lastname").value,
+      department: document.getElementById("department").value,
+      streetaddress: document.getElementById("streetaddress").value,
+      apartment: document.getElementById("apartment").value,
+      postcodezip: document.getElementById("postcodezip").value,
+      phone: document.getElementById("phone").value,
+      emailaddress: document.getElementById("emailaddress").value,
+      paymentMethod: paymentMethod.parentElement.textContent.trim(),
+      totalAmount: subtotal
     };
+
+    console.log("Order completo:", order); // Debug
 
     fetch("/pedido", {
       method: "POST",
@@ -357,6 +410,18 @@
   });
 
   window.onload = calcularTotal;
+</script>
+
+<script>
+  // Redirigir si no hay token JWT
+  (function() {
+    // Cambia 'jwt' por el nombre real de tu clave en localStorage/sessionStorage
+    const token = localStorage.getItem('jwt') || sessionStorage.getItem('jwt');
+    if (!token) {
+      alert('Debes iniciar sesión para proceder al checkout.');
+      window.location.href = 'login.html'; // Cambia por la ruta real de tu login
+    }
+  })();
 </script>
 
 	<footer class="ftco-footer">

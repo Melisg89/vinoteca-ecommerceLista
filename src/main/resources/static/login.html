@@ -34,30 +34,26 @@
   </div>
 
   <script>
-    const form = document.getElementById('loginForm');
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
 
-      const email = form.email.value;
-      const password = form.password.value;
-
-      fetch('/auth/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email, password})
-      })
-      .then(response => {
-        if (response.ok) {
-          alert('Login exitoso');
-          window.location.href = '/index.html'; // ✅ Redirección correcta
-        } else {
-          alert('Credenciales inválidas');
-        }
-      })
-      .catch(error => {
-        alert('Error en la conexión');
-        console.error(error);
+      const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
       });
+
+      if (response.ok) {
+          const data = await response.json();
+          // Guarda el JWT en localStorage
+          localStorage.setItem('jwt', data.token);
+          // Redirige al checkout o a la página anterior
+          window.location.href = 'checkout.html';
+      } else {
+          alert('Credenciales incorrectas o usuario no encontrado');
+      }
     });
   </script>
 </body>

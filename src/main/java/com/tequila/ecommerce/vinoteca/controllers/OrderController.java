@@ -1,5 +1,6 @@
 package com.tequila.ecommerce.vinoteca.controllers;
 
+import com.tequila.ecommerce.vinoteca.dto.OrderDTO;
 import com.tequila.ecommerce.vinoteca.models.Order;
 import com.tequila.ecommerce.vinoteca.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +59,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody Order order) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderDTO orderDTO) {
         try {
-            Order newOrder = orderService.createOrder(order);
+            Order newOrder = orderService.createOrderFromDTO(orderDTO);
             return new ResponseEntity<>(newOrder, HttpStatus.CREATED);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body("{\"message\": \"" + ex.getMessage() + "\"}");

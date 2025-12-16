@@ -13,18 +13,28 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nombre") // nombre de la columna en la base de datos
+    @Column(name = "nombre", nullable = false) // nombre de la columna en la base de datos
     private String name;
 
-    @Column(name = "email") // nombre de la columna en la base de datos
+    @Column(name = "email", nullable = false, unique = true) // nombre de la columna en la base de datos
     private String email;
 
-    @Column(name = "password") // nombre de la columna en la base de datos
+    @Column(name = "password", nullable = false) // nombre de la columna en la base de datos
     private String password;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.CLIENTE;
+
+    @Column(name = "enabled")
+    private Boolean enabled = true;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore // Evita el error de lazy initialization al serializar User
     private List<Order> orders; // almacena todas las compras realizadas por el usuario.
+
+    // Constructor por defecto
+    public User() {}
 
     // Getters estándar JavaBean
     public Long getId() {
@@ -41,6 +51,14 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
     }
 
     public List<Order> getPedidos() {
@@ -68,8 +86,22 @@ public class User {
         return this;
     }
 
+    public User setRole(Role role) {
+        this.role = role;
+        return this;
+    }
+
+    public User setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
     public User setPedidos(List<Order> orders) {
         this.orders = orders;
         return this;
+    }
+
+    public enum Role {
+        ADMIN, CLIENTE
     }
 }
