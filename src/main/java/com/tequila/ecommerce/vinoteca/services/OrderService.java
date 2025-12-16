@@ -130,7 +130,11 @@ public class OrderService {
             order.setEstado("PENDIENTE");
             order.setFechaCreacion(LocalDateTime.now());
             
-            // Convertir OrderItemDTO a OrderItem
+            // PRIMERO guardar la orden sin items
+            Order savedOrder = orderRepository.save(order);
+            logger.info("✅ Orden guardada con ID: {}", savedOrder.getId());
+            
+            // Convertir OrderItemDTO a OrderItem y asociarlos a la orden ya guardada
             List<OrderItem> processedItems = new ArrayList<>();
             for (OrderItemDTO itemDTO : orderDTO.getItems()) {
                 if (itemDTO.getProduct() == null || itemDTO.getProduct().getId() == null) {
@@ -141,17 +145,22 @@ public class OrderService {
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + itemDTO.getProduct().getId()));
                 
                 OrderItem item = new OrderItem();
-                item.setOrder(order);
+                item.setOrder(savedOrder);
                 item.setProduct(product);
                 item.setQuantity(itemDTO.getQuantity() != null && itemDTO.getQuantity() > 0 ? itemDTO.getQuantity() : 1);
                 item.setPrice(itemDTO.getPrice() != null && itemDTO.getPrice() > 0 ? itemDTO.getPrice() : product.getPrice().doubleValue());
                 
                 processedItems.add(item);
+                logger.info("✅ Item agregado: {} - Cantidad: {}", product.getName(), item.getQuantity());
             }
             
-            order.setItems(processedItems);
+            // Guardar los items
+            if (!processedItems.isEmpty()) {
+                savedOrder.setItems(processedItems);
+                savedOrder = orderRepository.save(savedOrder);
+                logger.info("✅ {} items guardados para la orden {}", processedItems.size(), savedOrder.getId());
+            }
             
-            Order savedOrder = orderRepository.save(order);
             logger.info("✅ Orden creada exitosamente con ID: {}", savedOrder.getId());
             
             return savedOrder;

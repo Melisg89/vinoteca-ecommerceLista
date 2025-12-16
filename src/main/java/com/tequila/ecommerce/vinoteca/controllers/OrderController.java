@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tequila.ecommerce.vinoteca.dto.OrderDTO;
 import com.tequila.ecommerce.vinoteca.models.Order;
 import com.tequila.ecommerce.vinoteca.models.User;
+import com.tequila.ecommerce.vinoteca.security.JwtUtil;
 import com.tequila.ecommerce.vinoteca.services.OrderService;
 import com.tequila.ecommerce.vinoteca.services.UserService;
 
@@ -40,6 +41,9 @@ public class OrderController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
     
     @GetMapping
     public ResponseEntity<List<Order>> getAllOrders() {
@@ -125,36 +129,63 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<?> checkout(@RequestBody OrderDTO orderDTO, Authentication authentication) {
+    public ResponseEntity<?> checkout(
+        @RequestBody OrderDTO orderDTO,
+        @RequestHeader(value = "Authorization", required = false) String authHeader
+    ) {
         try {
             logger.info("📍 Recibido checkout request");
+            logger.info("🔑 Authorization header: {}", authHeader != null ? authHeader.substring(0, Math.min(30, authHeader.length())) + "..." : "NULL");
             
-            // Validar que la orden no sea nula
+            // Validar que la orden tenga items
             if (orderDTO == null || orderDTO.getItems() == null || orderDTO.getItems().isEmpty()) {
                 logger.warn("⚠️ Carrito vacío");
                 return ResponseEntity.badRequest().body("{\"message\": \"Carrito vacío\"}");
             }
             
-            // Obtener el usuario autenticado
-            if (authentication == null || !authentication.isAuthenticated()) {
-                logger.error("❌ Usuario no autenticado");
+            // Obtener el token del header
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                logger.error("❌ Header Authorization no presente o formato inválido");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"message\": \"Usuario no autenticado\"}");
+                    .body("{\"message\": \"Token no proporcionado\"}");
             }
             
-            String email = authentication.getName();
-            User user = userService.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            String token = authHeader.substring(7); // Quita "Bearer "
+            logger.info("✅ Token extraído: {}", token.substring(0, Math.min(20, token.length())) + "...");
             
-            logger.info("✅ Usuario encontrado: {}", email);
+            // Validar el token
+            if (!jwtUtil.validateToken(token)) {
+                logger.error("❌ Token inválido");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"message\": \"Token inválido\"}");
+            }
+            
+            // Obtener el userId del token
+            Long userId = jwtUtil.getUserIdFromToken(token);
+            logger.info("✅ UserId extraído del token: {}", userId);
+            
+            // Obtener el usuario de la BD
+            User user = userService.getUserById(userId);
+            if (user == null) {
+                logger.error("❌ Usuario no encontrado: {}", userId);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"message\": \"Usuario no encontrado\"}");
+            }
+            
+            logger.info("✅ Usuario encontrado: {}", user.getEmail());
             logger.info("✅ Validación pasada, creando orden...");
             
             // Crear la orden
             Order result = orderService.createOrder(orderDTO, user);
             
-            logger.info("✅ Orden creada exitosamente");
+            logger.info("✅ Orden creada exitosamente con ID: {}", result.getId());
             
-            return ResponseEntity.ok(result);
+            // Retornar solo el ID de la orden en lugar del objeto completo
+            return ResponseEntity.ok(new java.util.HashMap<String, Object>() {{
+                put("id", result.getId());
+                put("message", "Orden creada exitosamente");
+                put("totalAmount", result.getTotalAmount());
+            }});
             
         } catch (Exception e) {
             logger.error("❌ Error en checkout: ", e);
