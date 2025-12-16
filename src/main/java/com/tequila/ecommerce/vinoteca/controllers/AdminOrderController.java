@@ -109,8 +109,8 @@ public class AdminOrderController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("{\"message\": \"Orden no encontrada\"}");
             }
-            logger.info("✅ Orden eliminada");
-            return ResponseEntity.ok("{\"message\": \"Orden eliminada exitosamente\"}");
+            logger.info("✅ Orden eliminada y stock devuelto");
+            return ResponseEntity.ok("{\"message\": \"Orden eliminada y stock devuelto\"}");
         } catch (Exception e) {
             logger.error("❌ Error al eliminar orden: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

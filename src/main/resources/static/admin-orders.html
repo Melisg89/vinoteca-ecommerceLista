@@ -17,9 +17,24 @@
         .btn-primary:hover { background-color: #d4570a; }
         .order-header { cursor: pointer; padding: 10px; background-color: #f9f9f9; border-radius: 5px; }
         .order-header:hover { background-color: #f0f0f0; }
-        .order-details { display: none; margin-top: 15px; border-top: 2px solid #eee; padding-top: 15px; }
+        .order-details { 
+            max-height: 0;
+            overflow: hidden;
+            margin-top: 0;
+            border-top: none;
+            padding-top: 0;
+            transition: all 0.3s ease;
+        }
+        .order-details.show { 
+            max-height: 2000px;
+            margin-top: 15px; 
+            border-top: 2px solid #eee; 
+            padding-top: 15px;
+        }
         .detail-section { margin-bottom: 20px; }
         .detail-label { font-weight: bold; color: #F96D00; }
+        .chevron-icon { transition: transform 0.3s ease; }
+        .chevron-icon.rotated { transform: rotate(180deg); }
     </style>
 </head>
 <body>
@@ -86,7 +101,7 @@
                             </div>
                             <div class="col-md-3 text-right">
                                 <strong>$${total}</strong>
-                                <i class="fa fa-chevron-down ml-2"></i>
+                                <i class="fa fa-chevron-down ml-2 chevron-icon"></i>
                             </div>
                         </div>
                     </div>
@@ -154,6 +169,8 @@
 
         function cargarOrdenes() {
             const token = getToken();
+            console.log('🔑 Token:', token ? 'presente' : 'ausente');
+            
             if (!token) {
                 alert('No autenticado');
                 window.location.href = 'login.html';
@@ -161,44 +178,72 @@
             }
 
             // Cargar Pendientes
+            console.log('📋 Cargando órdenes pendientes...');
             fetch(`${API_URL}/pending`, {
-                headers: { 'Authorization': 'Bearer ' + token }
+                method: 'GET',
+                headers: { 
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                }
             })
             .then(res => {
+                console.log('📊 Response status:', res.status);
                 if (res.status === 403) {
                     alert('❌ No tienes permisos de administrador');
                     window.location.href = 'index.html';
                     return Promise.reject('No admin');
                 }
+                if (res.status === 401) {
+                    alert('❌ Token expirado o inválido');
+                    window.location.href = 'login.html';
+                    return Promise.reject('No autenticado');
+                }
                 return res.json();
             })
             .then(ordenes => {
+                console.log('✅ Órdenes pendientes:', ordenes);
                 const container = document.getElementById('pendingOrders');
                 container.innerHTML = ordenes.length === 0 
                     ? '<p class="text-muted">No hay pedidos pendientes</p>'
                     : ordenes.map(crearOrdenHTML).join('');
             })
-            .catch(e => console.error('Error:', e));
+            .catch(e => {
+                console.error('❌ Error al cargar pendientes:', e);
+                document.getElementById('pendingOrders').innerHTML = '<p class="text-danger">Error al cargar pedidos</p>';
+            });
 
             // Cargar Completadas
+            console.log('📋 Cargando órdenes completadas...');
             fetch(`${API_URL}/completed`, {
-                headers: { 'Authorization': 'Bearer ' + token }
+                method: 'GET',
+                headers: { 
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                }
             })
-            .then(res => res.json())
+            .then(res => {
+                console.log('📊 Response status:', res.status);
+                return res.json();
+            })
             .then(ordenes => {
+                console.log('✅ Órdenes completadas:', ordenes);
                 const container = document.getElementById('completedOrders');
                 container.innerHTML = ordenes.length === 0 
                     ? '<p class="text-muted">No hay pedidos completados</p>'
                     : ordenes.map(crearOrdenHTML).join('');
             })
-            .catch(e => console.error('Error:', e));
+            .catch(e => {
+                console.error('❌ Error al cargar completadas:', e);
+                document.getElementById('completedOrders').innerHTML = '<p class="text-danger">Error al cargar pedidos</p>';
+            });
         }
 
         function toggleDetalles(element) {
             const detalles = element.nextElementSibling;
-            detalles.style.display = detalles.style.display === 'none' ? 'block' : 'none';
-            element.querySelector('i').classList.toggle('fa-chevron-down');
-            element.querySelector('i').classList.toggle('fa-chevron-up');
+            const icon = element.querySelector('i');
+            
+            detalles.classList.toggle('show');
+            icon.classList.toggle('rotated');
         }
 
         function cambiarEstado(orderId, nuevoEstado) {
@@ -240,5 +285,8 @@
 
         window.addEventListener('DOMContentLoaded', cargarOrdenes);
     </script>
+    <script src="js/main.js"></script>
+    <script src="js/auth-topbar.js"></script>
+    <script src="js/admin-guard.js"></script>
 </body>
 </html>

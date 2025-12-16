@@ -2,8 +2,7 @@ package com.tequila.ecommerce.vinoteca.models;
 
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,26 +26,22 @@ public class Product {
     private Long id;
 
     @Column(name = "nombre", nullable = false)
-    private String name;
+    private String nombre;
 
     @Column(name = "descripcion")
-    private String description;
-
-    @Column(name = "tipo_bebida")
-    private String tipoBebida;
+    private String descripcion;
 
     @Column(name = "precio", nullable = false)
     @NotNull(message = "El precio es obligatorio")
-    @JsonProperty("precio")
-    private BigDecimal price;
+    private BigDecimal precio;
 
     @Column(name = "stock", nullable = false)
     @NotNull(message = "El stock es obligatorio")
     private Integer stock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
-    @JsonBackReference
+    @JsonManagedReference
     private Category category;
 
     @Transient
@@ -66,39 +61,30 @@ public class Product {
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getNombre() {
+        return nombre;
     }
 
-    public Product setName(String name) {
-        this.name = name;
+    public Product setNombre(String nombre) {
+        this.nombre = nombre;
         return this;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public Product setDescription(String description) {
-        this.description = description;
+    public Product setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
         return this;
     }
 
-    public String getTipoBebida() {
-        return tipoBebida;
+    public BigDecimal getPrecio() {
+        return precio;
     }
 
-    public Product setTipoBebida(String tipoBebida) {
-        this.tipoBebida = tipoBebida;
-        return this;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public Product setPrice(BigDecimal price) {
-        this.price = price;
+    public Product setPrecio(BigDecimal precio) {
+        this.precio = precio;
         return this;
     }
 

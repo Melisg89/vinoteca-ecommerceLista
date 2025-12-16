@@ -60,8 +60,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/checkout").authenticated()
                 .requestMatchers("/api/orders/**").authenticated()
                 
+                // ✅ Páginas ADMIN - requieren autenticación (el script del frontend verifica el rol)
+                .requestMatchers("/admin-products.html", "/admin-orders.html").permitAll()
+                
                 // ✅ APIs protegidas solo para ADMIN
-                .requestMatchers("/admin-products.html", "/admin-orders.html").authenticated()
                 .requestMatchers("/api/admin/**").authenticated()
                 
                 // ❌ Todo lo demás requiere autenticación

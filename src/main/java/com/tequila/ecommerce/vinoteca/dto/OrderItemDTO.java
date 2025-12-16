@@ -1,18 +1,35 @@
 package com.tequila.ecommerce.vinoteca.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class OrderItemDTO {
-    private ProductDTO product;
+
+    @JsonProperty("productId")
+    private Long productId;
+
+    @JsonProperty("quantity")
     private Integer quantity;
+
+    @JsonProperty("price")
     private Double price;
 
-    public OrderItemDTO() {}
-
-    public ProductDTO getProduct() {
-        return product;
+    // Constructor sin argumentos (REQUERIDO)
+    public OrderItemDTO() {
     }
 
-    public void setProduct(ProductDTO product) {
-        this.product = product;
+    public OrderItemDTO(Long productId, Integer quantity, Double price) {
+        this.productId = productId;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    // ✅ VERIFICAR QUE EXISTEN ESTOS MÉTODOS
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public Integer getQuantity() {
@@ -29,5 +46,14 @@ public class OrderItemDTO {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderItemDTO{" +
+                "productId=" + productId +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                '}';
     }
 }

@@ -94,14 +94,15 @@ if (document.getElementById('checkout-form')) {
       const subtotal = carrito.reduce((acc, p) => acc + (p.price * (p.cantidad || p.quantity || 1)), 0);
       console.log('✅ Subtotal:', `$${subtotal.toFixed(2)}`);
 
+      // ✅ ESTRUCTURA CORRECTA: productId, NO product
       const items = carrito.map(p => ({
-        product: { id: p.id },
+        productId: p.id,  // ← Usar productId directamente, NO un objeto anidado
         quantity: parseInt(p.cantidad || p.quantity || 1),
         price: parseFloat(p.price)
       }));
 
       const order = {
-        items: items,
+        items: items,  // ← Los items ahora tienen estructura correcta
         firstname: document.getElementById("firstname").value,
         lastname: document.getElementById("lastname").value,
         department: document.getElementById("department").value,

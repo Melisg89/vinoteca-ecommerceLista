@@ -116,70 +116,117 @@ public class OrderService {
     }
 
     public Order createOrder(OrderDTO orderDTO, User user) {
-        logger.info("📝 Creando orden para usuario: {}", user.getEmail());
+        logger.info("📝 Creando nueva orden para usuario: {}", user.getEmail());
         
-        try {
-            Order order = new Order();
-            order.setUser(user);
-            order.setFirstname(orderDTO.getFirstname());
-            order.setLastname(orderDTO.getLastname());
-            order.setDepartment(orderDTO.getDepartment());
-            order.setStreetaddress(orderDTO.getStreetaddress());
-            order.setApartment(orderDTO.getApartment());
-            order.setPostcodezip(orderDTO.getPostcodezip());
-            order.setPhone(orderDTO.getPhone());
-            order.setEmailaddress(orderDTO.getEmailaddress());
-            order.setPaymentMethod(orderDTO.getPaymentMethod());
-            order.setTotalAmount(orderDTO.getTotalAmount());
-            order.setEstado("PENDIENTE");
-            order.setFechaCreacion(LocalDateTime.now());
-            
-            // ✅ PASO 1: Guardar la orden primero
-            Order savedOrder = orderRepository.save(order);
-            logger.info("✅ Orden guardada con ID: {}", savedOrder.getId());
-            
-            // ✅ PASO 2: Crear y guardar los OrderItems
-            List<OrderItem> processedItems = new ArrayList<>();
-            for (OrderItemDTO itemDTO : orderDTO.getItems()) {
-                if (itemDTO.getProduct() == null || itemDTO.getProduct().getId() == null) {
-                    throw new IllegalArgumentException("Producto inválido en los items");
+        Order order = new Order();
+        order.setUser(user);
+        order.setFirstname(orderDTO.getFirstname());
+        order.setLastname(orderDTO.getLastname());
+        order.setEmailaddress(orderDTO.getEmailaddress());
+        order.setPhone(orderDTO.getPhone());
+        order.setStreetaddress(orderDTO.getStreetaddress());
+        order.setApartment(orderDTO.getApartment());
+        order.setDepartment(orderDTO.getDepartment());
+        order.setPostcodezip(orderDTO.getPostcodezip());
+        order.setPaymentMethod(orderDTO.getPaymentMethod());
+        order.setEstado("PENDIENTE");
+        order.setFechaCreacion(LocalDateTime.now());
+        
+        Double totalAmount = 0.0;
+        
+        // Procesar items y restar stock
+        if (orderDTO.getItems() != null) {
+            for (var itemDTO : orderDTO.getItems()) {
+                logger.info("🔍 Procesando item: {}", itemDTO);
+                
+                // ✅ VALIDAR QUE productId NO SEA NULL
+                if (itemDTO.getProductId() == null) {
+                    logger.error("❌ productId es NULL en OrderItemDTO");
+                    throw new RuntimeException("productId no puede ser null");
                 }
                 
-                Product product = productRepository.findById(itemDTO.getProduct().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + itemDTO.getProduct().getId()));
+                Product product = productRepository.findById(itemDTO.getProductId())
+                    .orElseThrow(() -> {
+                        logger.error("❌ Producto no encontrado con ID: {}", itemDTO.getProductId());
+                        return new RuntimeException("Producto no encontrado con ID: " + itemDTO.getProductId());
+                    });
+                
+                // ✅ VALIDAR STOCK DISPONIBLE
+                if (product.getStock() < itemDTO.getQuantity()) {
+                    logger.warn("❌ Stock insuficiente para producto ID: {} (disponible: {}, solicitado: {})", 
+                        product.getId(), product.getStock(), itemDTO.getQuantity());
+                    throw new RuntimeException("Stock insuficiente para " + product.getNombre());
+                }
                 
                 OrderItem item = new OrderItem();
-                item.setOrder(savedOrder); // ✅ Asociar a la orden guardada
+                item.setOrder(order);
                 item.setProduct(product);
-                item.setQuantity(itemDTO.getQuantity() != null && itemDTO.getQuantity() > 0 ? itemDTO.getQuantity() : 1);
-                item.setPrice(itemDTO.getPrice() != null && itemDTO.getPrice() > 0 ? itemDTO.getPrice() : product.getPrice().doubleValue());
+                item.setQuantity(itemDTO.getQuantity());
+                item.setPrice(itemDTO.getPrice());
                 
-                // ✅ Guardar el OrderItem inmediatamente
-                OrderItem savedItem = orderItemRepository.save(item);
-                processedItems.add(savedItem);
-                logger.info("✅ OrderItem guardado: {} - Cantidad: {}", product.getName(), savedItem.getQuantity());
+                order.getItems().add(item);
+                totalAmount += itemDTO.getPrice() * itemDTO.getQuantity();
+                
+                // ✅ RESTAR STOCK
+                product.setStock(product.getStock() - itemDTO.getQuantity());
+                productRepository.save(product);
+                logger.info("📦 Stock restado para producto ID: {} -> Stock actual: {}", 
+                    product.getId(), product.getStock());
+            }
+        }
+        
+        order.setTotalAmount(totalAmount);
+        Order savedOrder = orderRepository.save(order);
+        logger.info("✅ Orden creada exitosamente con ID: {}", savedOrder.getId());
+        
+        return savedOrder;
+    }
+
+    public boolean deleteOrder(Long orderId) {
+        logger.info("🗑️ Eliminando orden ID: {}", orderId);
+        
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+        
+        // ✅ DEVOLVER STOCK SI ES PENDIENTE
+        if ("PENDIENTE".equalsIgnoreCase(order.getEstado())) {
+            logger.info("⏳ Orden PENDIENTE - Devolviendo stock...");
+            
+            for (OrderItem item : order.getItems()) {
+                Product product = item.getProduct();
+                product.setStock(product.getStock() + item.getQuantity());
+                productRepository.save(product);
+                logger.info("✅ Stock devuelto para producto ID: {} -> Stock actual: {}", 
+                    product.getId(), product.getStock());
             }
             
-            // ✅ PASO 3: Actualizar la orden con los items
-            savedOrder.setItems(processedItems);
-            savedOrder = orderRepository.save(savedOrder);
-            logger.info("✅ {} OrderItems asociados a la orden {}", processedItems.size(), savedOrder.getId());
-            
-            logger.info("✅ Orden creada exitosamente con ID: {}", savedOrder.getId());
-            
-            return savedOrder;
-        } catch (Exception e) {
-            logger.error("❌ Error al crear orden: ", e);
-            throw new RuntimeException("Error al crear la orden: " + e.getMessage());
+            logger.info("✅ Stock devuelto completamente para orden ID: {}", orderId);
+        } else {
+            logger.warn("⚠️  Orden NO PENDIENTE (estado: {}) - No se devuelve stock", order.getEstado());
         }
+        
+        orderRepository.deleteById(orderId);
+        logger.info("✅ Orden eliminada");
+        return true;
+    }
+
+    public List<Order> getOrdersByEstado(String estado) {
+        logger.info("🔍 Buscando órdenes con estado: {}", estado);
+        return orderRepository.findByEstado(estado);
+    }
+
+    public Order getOrderById(Long orderId) {
+        logger.info("🔍 Obteniendo orden ID: {}", orderId);
+        return orderRepository.findById(orderId).orElse(null);
+    }
+
+    public Order updateOrder(Order order) {
+        logger.info("📝 Actualizando orden ID: {}", order.getId());
+        return orderRepository.save(order);
     }
 
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
-    }
-
-    public Order getOrderById(Long id) {
-        return orderRepository.findById(id).orElse(null);
     }
 
     public List<Order> getOrdersByUserId(Long userId) {

@@ -41,16 +41,16 @@
                         <input type="text" class="form-control" id="nombre" required>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label>Tipo de Bebida</label>
-                        <select class="form-control" id="tipoBebida" required>
-                            <option value="">Seleccione...</option>
-                            <option value="Brandy">Brandy</option>
-                            <option value="Gin">Gin</option>
-                            <option value="Ron">Ron</option>
-                            <option value="Tequila">Tequila</option>
-                            <option value="Vodka">Vodka</option>
-                            <option value="Whiskey">Whiskey</option>
-                        </select>
+                        <label>Tipo de Bebida (Categoría)</label>
+                        <div class="input-group">
+                            <select class="form-control" id="tipoBebida" required>
+                                <option value="">Seleccione una categoría...</option>
+                            </select>
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="button" onclick="mostrarModalNuevaCategoria()">➕ Nueva</button>
+                                <button class="btn btn-info" type="button" onclick="mostrarModalGestionarCategorias()">📋 Gestionar</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -71,8 +71,7 @@
                         <input type="number" class="form-control" id="stock" required>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label>Categoría ID</label>
-                        <input type="number" class="form-control" id="categoryId">
+                        <!-- Campo removido, ahora solo tipoBebida se usa como categoría -->
                     </div>
                 </div>
 
@@ -91,7 +90,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Nombre</th>
-                            <th>Tipo</th>
+                            <th>Categoría</th>
                             <th>Precio</th>
                             <th>Stock</th>
                             <th>Acciones</th>
@@ -104,13 +103,188 @@
         </div>
     </div>
 
+    <!-- Modal Nueva Categoría -->
+    <div class="modal fade" id="modalNuevaCategoria" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">➕ Nueva Categoría</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <form id="formularioCategoria" onsubmit="guardarNuevaCategoria(event)">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Nombre de la Categoría</label>
+                            <input type="text" class="form-control" id="nombreCategoria" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">💾 Guardar Categoría</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gestionar Categorías -->
+    <div class="modal fade" id="modalGestionarCategorias" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">📋 Gestionar Categorías</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="categoriasTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriasBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         const API_URL = 'http://localhost:8081/api/admin/products';
+        const CATEGORIES_API_URL = 'http://localhost:8081/api/categoria';
 
         function getToken() {
             return localStorage.getItem('jwt');
+        }
+
+        function cargarCategorias() {
+            fetch(CATEGORIES_API_URL)
+                .then(res => res.json())
+                .then(categorias => {
+                    console.log('📦 Categorías cargadas:', categorias);
+                    const selectTipo = document.getElementById('tipoBebida');
+                    selectTipo.innerHTML = '<option value="">Seleccione una categoría...</option>';
+                    
+                    if (categorias && Array.isArray(categorias)) {
+                        categorias.forEach(cat => {
+                            console.log('➕ Agregando categoría:', cat.id, cat.name || cat.nombre);
+                            const option = document.createElement('option');
+                            option.value = cat.id;
+                            option.textContent = cat.name || cat.nombre || 'Sin nombre';
+                            selectTipo.appendChild(option);
+                        });
+                        console.log('✅ Total de categorías: ' + selectTipo.options.length);
+                    } else {
+                        console.error('❌ Las categorías no son un array:', categorias);
+                    }
+                })
+                .catch(e => {
+                    console.error('Error al cargar categorías:', e);
+                });
+        }
+
+        function mostrarModalNuevaCategoria() {
+            $('#modalNuevaCategoria').modal('show');
+        }
+
+        function mostrarModalGestionarCategorias() {
+            cargarTablaCategoria();
+            $('#modalGestionarCategorias').modal('show');
+        }
+
+        function cargarTablaCategoria() {
+            fetch(CATEGORIES_API_URL)
+                .then(res => res.json())
+                .then(categorias => {
+                    const tbody = document.getElementById('categoriasBody');
+                    tbody.innerHTML = '';
+                    
+                    if (categorias && Array.isArray(categorias)) {
+                        categorias.forEach(cat => {
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td>${cat.id}</td>
+                                    <td>${cat.name || cat.nombre}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger" onclick="eliminarCategoria(${cat.id})">🗑️ Eliminar</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                })
+                .catch(e => console.error('Error al cargar tabla:', e));
+        }
+
+        function guardarNuevaCategoria(event) {
+            event.preventDefault();
+            
+            const data = {
+                name: document.getElementById('nombreCategoria').value
+            };
+
+            console.log('📤 Enviando categoría:', data);
+
+            fetch(CATEGORIES_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                console.log('✅ Categoría creada:', result);
+                alert('✅ Categoría creada exitosamente');
+                document.getElementById('formularioCategoria').reset();
+                $('#modalNuevaCategoria').modal('hide');
+                cargarCategorias();
+                if (result.id) {
+                    document.getElementById('tipoBebida').value = result.id;
+                }
+            })
+            .catch(e => {
+                console.error('Error:', e);
+                alert('❌ Error al crear la categoría');
+            });
+        }
+
+        function eliminarCategoria(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta categoría?')) return;
+            
+            fetch(`${CATEGORIES_API_URL}/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert('✅ Categoría eliminada exitosamente');
+                    cargarTablaCategoria();
+                    cargarCategorias();
+                } else {
+                    alert('❌ Error al eliminar la categoría');
+                }
+            })
+            .catch(e => {
+                console.error('Error:', e);
+                alert('❌ Error al eliminar la categoría');
+            });
         }
 
         function verificarAdminYCargar() {
@@ -121,7 +295,8 @@
                 return;
             }
 
-            // Verificar si es admin llamando a un endpoint que solo admin puede acceder
+            cargarCategorias();
+
             fetch(API_URL, {
                 headers: { 'Authorization': 'Bearer ' + token }
             })
@@ -143,7 +318,7 @@
                             <tr>
                                 <td>${p.id}</td>
                                 <td>${p.nombre}</td>
-                                <td><span class="badge badge-info">${p.tipoBebida}</span></td>
+                                <td><span class="badge badge-info">${p.category?.name || 'Sin categoría'}</span></td>
                                 <td>$${p.precio.toFixed(2)}</td>
                                 <td>${p.stock}</td>
                                 <td>
@@ -166,14 +341,14 @@
             
             const token = getToken();
             const productId = document.getElementById('productId').value;
+            const categoryId = parseInt(document.getElementById('tipoBebida').value);
             
             const data = {
                 nombre: document.getElementById('nombre').value,
                 descripcion: document.getElementById('descripcion').value,
                 precio: parseFloat(document.getElementById('precio').value),
                 stock: parseInt(document.getElementById('stock').value),
-                tipoBebida: document.getElementById('tipoBebida').value,
-                categoryId: document.getElementById('categoryId').value || null
+                categoryId: categoryId
             };
 
             const url = productId ? `${API_URL}/${productId}` : API_URL;
@@ -208,8 +383,7 @@
                 document.getElementById('descripcion').value = p.descripcion;
                 document.getElementById('precio').value = p.precio;
                 document.getElementById('stock').value = p.stock;
-                document.getElementById('tipoBebida').value = p.tipoBebida;
-                document.getElementById('categoryId').value = p.category?.id || '';
+                document.getElementById('tipoBebida').value = p.category?.id || '';
                 window.scrollTo(0, 0);
             });
         }
@@ -241,5 +415,10 @@
 
         window.addEventListener('DOMContentLoaded', verificarAdminYCargar);
     </script>
+
+
+
+</html></body>    <script src="js/main.js"></script>    <script src="js/auth-topbar.js"></script>
+    <script src="js/admin-guard.js"></script>
 </body>
 </html>

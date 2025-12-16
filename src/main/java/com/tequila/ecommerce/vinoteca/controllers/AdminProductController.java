@@ -116,10 +116,8 @@ public class AdminProductController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllProducts(Authentication authentication) {
-        ResponseEntity<?> adminCheck = verificarAdmin(authentication);
-        if (adminCheck != null) return adminCheck;
-
+    public ResponseEntity<?> getAllProducts() {
+        // GET sin autenticación requerida
         try {
             logger.info("📦 Obteniendo todos los productos");
             List<Product> products = productService.getAllProducts();
@@ -129,6 +127,28 @@ public class AdminProductController {
             logger.error("❌ Error al obtener productos: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("{\"message\": \"Error al obtener productos: " + e.getMessage() + "\"}");
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProductById(@PathVariable Long id) {
+        try {
+            logger.info("📦 Obteniendo producto ID: {}", id);
+            Product product = productService.getAllProducts().stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+            
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"message\": \"Producto no encontrado\"}");
+            }
+            logger.info("✅ Producto obtenido");
+            return ResponseEntity.ok(product);
+        } catch (Exception e) {
+            logger.error("❌ Error al obtener producto: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("{\"message\": \"Error: " + e.getMessage() + "\"}");
         }
     }
 

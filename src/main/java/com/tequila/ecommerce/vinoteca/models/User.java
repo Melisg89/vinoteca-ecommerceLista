@@ -1,8 +1,19 @@
 package com.tequila.ecommerce.vinoteca.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users") // nombre de la tabla en la base de datos
@@ -30,7 +41,7 @@ public class User {
     private Boolean enabled = true;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonIgnore // Evita el error de lazy initialization al serializar User
+    @JsonIgnore
     private List<Order> orders; // almacena todas las compras realizadas por el usuario.
 
     // Constructor por defecto

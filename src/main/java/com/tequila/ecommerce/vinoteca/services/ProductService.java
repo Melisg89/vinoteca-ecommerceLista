@@ -1,6 +1,9 @@
 // ...existing imports...
 package com.tequila.ecommerce.vinoteca.services;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +14,6 @@ import com.tequila.ecommerce.vinoteca.models.Category;
 import com.tequila.ecommerce.vinoteca.models.Product;
 import com.tequila.ecommerce.vinoteca.repository.CategoryRepository;
 import com.tequila.ecommerce.vinoteca.repository.ProductRepository;
-
-import java.util.List;
 
 @Service
 public class ProductService {
@@ -31,9 +32,8 @@ public class ProductService {
         Product product = new Product();
         product.setNombre(productDTO.getNombre());
         product.setDescripcion(productDTO.getDescripcion());
-        product.setPrecio(productDTO.getPrecio());
+        product.setPrecio(BigDecimal.valueOf(productDTO.getPrecio()));
         product.setStock(productDTO.getStock());
-        product.setTipoBebida(productDTO.getTipoBebida());
         
         if (productDTO.getCategoryId() != null) {
             Category category = categoryRepository.findById(productDTO.getCategoryId())
@@ -52,9 +52,8 @@ public class ProductService {
         
         product.setNombre(productDTO.getNombre());
         product.setDescripcion(productDTO.getDescripcion());
-        product.setPrecio(productDTO.getPrecio());
+        product.setPrecio(BigDecimal.valueOf(productDTO.getPrecio()));
         product.setStock(productDTO.getStock());
-        product.setTipoBebida(productDTO.getTipoBebida());
         
         if (productDTO.getCategoryId() != null) {
             Category category = categoryRepository.findById(productDTO.getCategoryId())
@@ -71,7 +70,7 @@ public class ProductService {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
         
-        product.setPrecio(newPrice);
+        product.setPrecio(BigDecimal.valueOf(newPrice));
         return productRepository.save(product);
     }
 
