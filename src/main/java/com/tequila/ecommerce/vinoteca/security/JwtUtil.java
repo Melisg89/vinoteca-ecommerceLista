@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,8 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     @Value("${jwt.secret:miClaveSecretaMuySeguraParaJWTPorFavor123456}")
     private String secret;
@@ -27,7 +31,13 @@ public class JwtUtil {
     }
 
     public String generateToken(Long userId, String email, String role, String nombre) {
-        return Jwts.builder()
+        logger.info("🔐 GENERANDO JWT TOKEN");
+        logger.info("   📌 User ID: {}", userId);
+        logger.info("   📧 Email: {}", email);
+        logger.info("   👤 Nombre: {}", nombre);
+        logger.info("   🛡️  Role: {}", role);
+
+        String token = Jwts.builder()
             .setSubject(userId.toString())
             .claim("email", email)
             .claim("role", role)
@@ -36,6 +46,11 @@ public class JwtUtil {
             .setExpiration(new Date(System.currentTimeMillis() + 86400000))
             .signWith(getSigningKey())
             .compact();
+
+        logger.info("✅ JWT generado exitosamente");
+        logger.info("   🎫 Token (primeros 50 chars): {}", token.substring(0, Math.min(50, token.length())) + "...");
+        
+        return token;
     }
 
     private String createToken(Map<String, Object> claims, String subject, String email) {
@@ -65,14 +80,38 @@ public class JwtUtil {
     }
 
     public String getRoleFromToken(String token) {
-        return (String) getAllClaimsFromToken(token).get("role");
+        String role = (String) getAllClaimsFromToken(token).get("role");
+        logger.info("🔍 Role extraído del token: {}", role);
+        return role;
+    }
+
+    public String getEmailFromToken(String token) {
+        return (String) getAllClaimsFromToken(token).get("email");
     }
 
     public boolean validateToken(String token) {
         try {
-            getAllClaimsFromToken(token);
+            Claims claims = getAllClaimsFromToken(token);
+            logger.info("✅ Token válido");
+            logger.info("   📌 Claims: userId={}, email={}, role={}", 
+                claims.getSubject(), 
+                claims.get("email"), 
+                claims.get("role"));
             return true;
         } catch (Exception e) {
+            logger.error("❌ Token inválido: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean isAdmin(String token) {
+        try {
+            String role = getRoleFromToken(token);
+            boolean isAdmin = "ADMIN".equalsIgnoreCase(role);
+            logger.info("🔐 Verificando si es ADMIN: {} -> {}", role, isAdmin ? "✅ SÍ" : "❌ NO");
+            return isAdmin;
+        } catch (Exception e) {
+            logger.error("❌ Error verificando si es admin: {}", e.getMessage());
             return false;
         }
     }

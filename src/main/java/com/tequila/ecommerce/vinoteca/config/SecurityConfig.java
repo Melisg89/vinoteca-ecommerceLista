@@ -41,7 +41,7 @@ public class SecurityConfig {
                     "/product.html", 
                     "/product-single.html",
                     "/cart.html", 
-                    "/checkout.html",  // ✅ Permitir acceso a checkout.html
+                    "/checkout.html",
                     "/blog.html", 
                     "/blog-single.html",
                     "/contact.html", 
@@ -56,9 +56,13 @@ public class SecurityConfig {
                 // ✅ APIs públicas de autenticación
                 .requestMatchers("/api/auth/**", "/api/products/**", "/api/categoria/**").permitAll()
                 
-                // ✅ APIs protegidas - Solo este endpoint requiere JWT
+                // ✅ APIs protegidas para usuarios normales
                 .requestMatchers("/api/checkout").authenticated()
                 .requestMatchers("/api/orders/**").authenticated()
+                
+                // ✅ APIs protegidas solo para ADMIN
+                .requestMatchers("/admin-products.html", "/admin-orders.html").authenticated()
+                .requestMatchers("/api/admin/**").authenticated()
                 
                 // ❌ Todo lo demás requiere autenticación
                 .anyRequest().authenticated()

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gestionar Pedidos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { background-color: #f5f5f5; }
+        .navbar { background-color: #1a1a1a; }
+        .container-admin { max-width: 1200px; margin-top: 30px; }
+        .order-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .badge-pending { background-color: #ffc107; }
+        .badge-completed { background-color: #28a745; }
+        .btn-primary { background-color: #F96D00; border-color: #F96D00; }
+        .btn-primary:hover { background-color: #d4570a; }
+        .order-header { cursor: pointer; padding: 10px; background-color: #f9f9f9; border-radius: 5px; }
+        .order-header:hover { background-color: #f0f0f0; }
+        .order-details { display: none; margin-top: 15px; border-top: 2px solid #eee; padding-top: 15px; }
+        .detail-section { margin-bottom: 20px; }
+        .detail-label { font-weight: bold; color: #F96D00; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Tienda de <span style="color: #F96D00;">Licores</span></a>
+            <div class="ml-auto">
+                <a href="admin-products.html" class="btn btn-outline-light mr-2">📦 Gestionar Productos</a>
+                <button class="btn btn-outline-light" onclick="logout()">🚪 Salir</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container container-admin">
+        <!-- Pedidos Pendientes -->
+        <div class="mb-5">
+            <h3>⏳ Pedidos Pendientes</h3>
+            <div id="pendingOrders"></div>
+        </div>
+
+        <!-- Pedidos Completados -->
+        <div class="mb-5">
+            <h3>✅ Pedidos Completados</h3>
+            <div id="completedOrders"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        const API_URL = 'http://localhost:8081/api/admin/orders';
+
+        function getToken() {
+            return localStorage.getItem('jwt');
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('es-AR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function crearOrdenHTML(order) {
+            const total = order.totalAmount ? order.totalAmount.toFixed(2) : '0.00';
+            
+            return `
+                <div class="order-card">
+                    <div class="order-header" onclick="toggleDetalles(this)">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <strong>Orden #${order.id}</strong>
+                            </div>
+                            <div class="col-md-3">
+                                ${order.firstname} ${order.lastname}
+                            </div>
+                            <div class="col-md-3">
+                                <span class="badge ${order.estado === 'PENDIENTE' ? 'badge-pending' : 'badge-completed'}">
+                                    ${order.estado}
+                                </span>
+                            </div>
+                            <div class="col-md-3 text-right">
+                                <strong>$${total}</strong>
+                                <i class="fa fa-chevron-down ml-2"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-details">
+                        <div class="detail-section">
+                            <div class="detail-label">👤 Información del Cliente</div>
+                            <p><strong>Nombre:</strong> ${order.firstname} ${order.lastname}</p>
+                            <p><strong>Email:</strong> ${order.emailaddress}</p>
+                            <p><strong>Teléfono:</strong> ${order.phone}</p>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-label">📍 Detalles de Envío</div>
+                            <p><strong>Dirección:</strong> ${order.streetaddress} ${order.apartment || ''}</p>
+                            <p><strong>Departamento:</strong> ${order.department}</p>
+                            <p><strong>Código Postal:</strong> ${order.postcodezip}</p>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-label">💳 Método de Pago</div>
+                            <p>${order.paymentMethod}</p>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-label">📦 Productos Comprados</div>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${order.items.map(item => `
+                                            <tr>
+                                                <td>${item.product.nombre}</td>
+                                                <td>${item.quantity}</td>
+                                                <td>$${item.price.toFixed(2)}</td>
+                                                <td>$${(item.price * item.quantity).toFixed(2)}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            ${order.estado === 'PENDIENTE' ? `
+                                <button class="btn btn-sm btn-success" onclick="cambiarEstado(${order.id}, 'COMPLETADA')">✅ Marcar como Completada</button>
+                            ` : ''}
+                            <button class="btn btn-sm btn-danger" onclick="eliminarOrden(${order.id})">🗑️ Eliminar</button>
+                        </div>
+
+                        <small class="text-muted">
+                            Creada: ${formatDate(order.fechaCreacion)}
+                        </small>
+                    </div>
+                </div>
+            `;
+        }
+
+        function cargarOrdenes() {
+            const token = getToken();
+            if (!token) {
+                alert('No autenticado');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Cargar Pendientes
+            fetch(`${API_URL}/pending`, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            })
+            .then(res => {
+                if (res.status === 403) {
+                    alert('❌ No tienes permisos de administrador');
+                    window.location.href = 'index.html';
+                    return Promise.reject('No admin');
+                }
+                return res.json();
+            })
+            .then(ordenes => {
+                const container = document.getElementById('pendingOrders');
+                container.innerHTML = ordenes.length === 0 
+                    ? '<p class="text-muted">No hay pedidos pendientes</p>'
+                    : ordenes.map(crearOrdenHTML).join('');
+            })
+            .catch(e => console.error('Error:', e));
+
+            // Cargar Completadas
+            fetch(`${API_URL}/completed`, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            })
+            .then(res => res.json())
+            .then(ordenes => {
+                const container = document.getElementById('completedOrders');
+                container.innerHTML = ordenes.length === 0 
+                    ? '<p class="text-muted">No hay pedidos completados</p>'
+                    : ordenes.map(crearOrdenHTML).join('');
+            })
+            .catch(e => console.error('Error:', e));
+        }
+
+        function toggleDetalles(element) {
+            const detalles = element.nextElementSibling;
+            detalles.style.display = detalles.style.display === 'none' ? 'block' : 'none';
+            element.querySelector('i').classList.toggle('fa-chevron-down');
+            element.querySelector('i').classList.toggle('fa-chevron-up');
+        }
+
+        function cambiarEstado(orderId, nuevoEstado) {
+            const token = getToken();
+            fetch(`${API_URL}/${orderId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ estado: nuevoEstado })
+            })
+            .then(() => {
+                alert('✅ Estado actualizado');
+                cargarOrdenes();
+            })
+            .catch(e => alert('Error: ' + e));
+        }
+
+        function eliminarOrden(orderId) {
+            if (!confirm('¿Eliminar esta orden?')) return;
+            
+            const token = getToken();
+            fetch(`${API_URL}/${orderId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + token }
+            })
+            .then(() => {
+                alert('✅ Orden eliminada');
+                cargarOrdenes();
+            })
+            .catch(e => alert('Error: ' + e));
+        }
+
+        function logout() {
+            localStorage.removeItem('jwt');
+            window.location.href = 'login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', cargarOrdenes);
+    </script>
+</body>
+</html>

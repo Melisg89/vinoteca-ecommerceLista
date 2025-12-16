@@ -63,7 +63,6 @@ public class AuthController {
             String email = loginDTO.getEmail().trim().toLowerCase();
             logger.info("🔍 Intentando login para email: '{}'", email);
 
-            // Busca el usuario por email normalizado
             User user = userService.findByEmail(email)
                 .orElseThrow(() -> {
                     logger.warn("❌ Usuario no encontrado: {}", email);
@@ -71,10 +70,8 @@ public class AuthController {
                 });
 
             logger.info("✅ Usuario encontrado: {}", user.getEmail());
-            logger.info("📦 Contraseña almacenada (hash): {}", user.getPassword());
-            logger.info("📝 Contraseña ingresada: {}", loginDTO.getPassword());
+            logger.info("🛡️  Rol del usuario: {}", user.getRole());
 
-            // Verifica la contraseña usando el encoder
             if (!userService.validatePassword(loginDTO.getPassword(), user.getPassword())) {
                 logger.warn("❌ Contraseña incorrecta para usuario: {}", email);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -83,7 +80,7 @@ public class AuthController {
 
             logger.info("✅ Contraseña válida");
             String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole().toString(), user.getNombre());
-            logger.info("🎫 Token generado exitosamente");
+            logger.info("🎫 Token generado exitosamente para usuario: {} con rol: {}", user.getEmail(), user.getRole());
             
             return ResponseEntity.ok(new AuthResponseDTO(token, user.getId(), user.getEmail(), user.getRole().toString()));
         } catch (Exception ex) {
