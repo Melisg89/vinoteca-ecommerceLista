@@ -1731,8 +1731,8 @@ textarea.form-control {
 		position: absolute;
 		top: 100%;
 		width: 100%;
-		.owl-prev,
-		.owl-next {
+		owl-prev,
+		owl-next {
 			position: absolute;
 			transform: translateY(-50%);
 			margin-top: -10px;
@@ -1754,26 +1754,26 @@ textarea.form-control {
 			}
 			opacity: 0;
 		}
-		.owl-prev {
+		owl-prev {
 			left: 50%;
 			margin-left: -80px;
 		}
-		.owl-next {
+		owl-next {
 			right: 50%;
 			margin-right: -80px;
 		}
 	}
 	&:hover{
-		.owl-nav{
-			.owl-prev,
-			.owl-next{
+		owl-nav{
+			owl-prev,
+			owl-next{
 				opacity: 1;
 			}
-			.owl-prev {
+			owl-prev {
 				left: 50%;
 				margin-left: -80px;
 			}
-			.owl-next {
+			owl-next {
 				right: 50%;
 				margin-right: -80px;
 			}
@@ -1781,7 +1781,7 @@ textarea.form-control {
 	}
 	.owl-dots {
 		text-align: center;
-		.owl-dot {
+		owl-dot {
 			width: 10px;
 			height: 10px;
 			margin: 5px;
@@ -2454,6 +2454,7 @@ textarea.form-control {
   stroke-dashoffset: 0;
   animation: loader-dash 1.5s ease-in-out infinite;
   stroke-linecap: round;
+  stroke: #ffae0d;
 }
 
 @keyframes loader-rotate {

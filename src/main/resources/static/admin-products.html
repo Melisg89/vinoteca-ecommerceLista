@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Gestionar Productos</title>
+    <title>Admin - Licor&Co. Gestionar Productos</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
@@ -11,8 +11,8 @@
         .navbar { background-color: #1a1a1a; }
         .container-admin { max-width: 1200px; margin-top: 30px; }
         .product-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .btn-primary { background-color: #F96D00; border-color: #F96D00; }
-        .btn-primary:hover { background-color: #d4570a; }
+        .btn-primary { background-color: #ffae0d; border-color: #ffae0d; }
+        .btn-primary:hover { background-color: #e6990b; }
         .table-hover tbody tr:hover { background-color: #f0f0f0; }
         .modal-header { background-color: #F96D00; color: white; }
     </style>
@@ -20,10 +20,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="index.html">Tienda de <span style="color: #F96D00;">Licores</span></a>
+            <a class="navbar-brand" href="index.html">Licor<span style="color: #ffae0d;">&Co.</span></a>
             <div class="ml-auto">
-                <a href="admin-orders.html" class="btn btn-outline-light mr-2">📋 Ver Pedidos</a>
-                <button class="btn btn-outline-light" onclick="logout()">🚪 Salir</button>
+                <a href="admin-orders.html" class="btn btn-outline-light mr-2">Ver Pedidos</a>
+                <button class="btn btn-outline-light" onclick="logout()">Salir</button>
             </div>
         </div>
     </nav>
@@ -33,7 +33,7 @@
 
         <!-- Formulario Crear/Editar Producto -->
         <div class="product-card mb-4">
-            <h4>➕ Nuevo Producto / Editar</h4>
+            <h4>Nuevo Producto / Editar</h4>
             <form id="productForm">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -47,8 +47,8 @@
                                 <option value="">Seleccione una categoría...</option>
                             </select>
                             <div class="input-group-append">
-                                <button class="btn btn-success" type="button" onclick="mostrarModalNuevaCategoria()">➕ Nueva</button>
-                                <button class="btn btn-info" type="button" onclick="mostrarModalGestionarCategorias()">📋 Gestionar</button>
+                                <button class="btn btn-success" type="button" onclick="mostrarModalNuevaCategoria()">Nueva Categoría</button>
+                                <button class="btn btn-info" type="button" onclick="mostrarModalGestionarCategorias()">Gestionar Categorías</button>
                             </div>
                         </div>
                     </div>
@@ -75,15 +75,15 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">💾 Guardar Producto</button>
-                <button type="button" class="btn btn-secondary ml-2" onclick="limpiarFormulario()">🔄 Limpiar</button>
+                <button type="submit" class="btn btn-primary">Guardar Producto</button>
+                <button type="button" class="btn btn-secondary ml-2" onclick="limpiarFormulario()">Limpiar</button>
                 <input type="hidden" id="productId">
             </form>
         </div>
 
         <!-- Tabla de Productos -->
         <div class="product-card">
-            <h4>📦 Lista de Productos</h4>
+            <h4>Lista de Productos</h4>
             <div class="table-responsive">
                 <table class="table table-hover" id="productosTable">
                     <thead class="table-dark">
@@ -108,7 +108,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">➕ Nueva Categoría</h5>
+                    <h5 class="modal-title">Nueva Categoría</h5>
                     <button type="button" class="close" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
@@ -122,7 +122,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">💾 Guardar Categoría</button>
+                        <button type="submit" class="btn btn-primary">Guardar Categoría</button>
                     </div>
                 </form>
             </div>
@@ -134,7 +134,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">📋 Gestionar Categorías</h5>
+                    <h5 class="modal-title">Gestionar Categorías</h5>
                     <button type="button" class="close" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
@@ -175,21 +175,21 @@
             fetch(CATEGORIES_API_URL)
                 .then(res => res.json())
                 .then(categorias => {
-                    console.log('📦 Categorías cargadas:', categorias);
+                    console.log('Categorías cargadas:', categorias);
                     const selectTipo = document.getElementById('tipoBebida');
                     selectTipo.innerHTML = '<option value="">Seleccione una categoría...</option>';
                     
                     if (categorias && Array.isArray(categorias)) {
                         categorias.forEach(cat => {
-                            console.log('➕ Agregando categoría:', cat.id, cat.name || cat.nombre);
+                            console.log('Agregando categoría:', cat.id, cat.name || cat.nombre);
                             const option = document.createElement('option');
                             option.value = cat.id;
                             option.textContent = cat.name || cat.nombre || 'Sin nombre';
                             selectTipo.appendChild(option);
                         });
-                        console.log('✅ Total de categorías: ' + selectTipo.options.length);
+                        console.log('Total de categorías: ' + selectTipo.options.length);
                     } else {
-                        console.error('❌ Las categorías no son un array:', categorias);
+                        console.error('Las categorías no son un array:', categorias);
                     }
                 })
                 .catch(e => {
@@ -220,7 +220,7 @@
                                     <td>${cat.id}</td>
                                     <td>${cat.name || cat.nombre}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-danger" onclick="eliminarCategoria(${cat.id})">🗑️ Eliminar</button>
+                                        <button class="btn btn-sm btn-danger" onclick="eliminarCategoria(${cat.id})">Eliminar</button>
                                     </td>
                                 </tr>
                             `;
@@ -237,7 +237,7 @@
                 name: document.getElementById('nombreCategoria').value
             };
 
-            console.log('📤 Enviando categoría:', data);
+            console.log('Enviando categoría:', data);
 
             fetch(CATEGORIES_API_URL, {
                 method: 'POST',
@@ -248,8 +248,8 @@
             })
             .then(res => res.json())
             .then(result => {
-                console.log('✅ Categoría creada:', result);
-                alert('✅ Categoría creada exitosamente');
+                console.log('Categoría creada:', result);
+                alert('Categoría creada exitosamente');
                 document.getElementById('formularioCategoria').reset();
                 $('#modalNuevaCategoria').modal('hide');
                 cargarCategorias();
@@ -259,7 +259,7 @@
             })
             .catch(e => {
                 console.error('Error:', e);
-                alert('❌ Error al crear la categoría');
+                alert('Error al crear la categoría');
             });
         }
 
@@ -274,16 +274,16 @@
             })
             .then(res => {
                 if (res.ok) {
-                    alert('✅ Categoría eliminada exitosamente');
+                    alert('Categoría eliminada exitosamente');
                     cargarTablaCategoria();
                     cargarCategorias();
                 } else {
-                    alert('❌ Error al eliminar la categoría');
+                    alert('Error al eliminar la categoría');
                 }
             })
             .catch(e => {
                 console.error('Error:', e);
-                alert('❌ Error al eliminar la categoría');
+                alert('Error al eliminar la categoría');
             });
         }
 
@@ -302,7 +302,7 @@
             })
             .then(res => {
                 if (res.status === 403) {
-                    alert('❌ No tienes permisos de administrador');
+                    alert('No tienes permisos de administrador');
                     window.location.href = 'index.html';
                     return;
                 }
@@ -322,8 +322,8 @@
                                 <td>$${p.precio.toFixed(2)}</td>
                                 <td>${p.stock}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning" onclick="editarProducto(${p.id})">✏️ Editar</button>
-                                    <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${p.id})">🗑️ Eliminar</button>
+                                    <button class="btn btn-sm btn-warning" onclick="editarProducto(${p.id})">Editar</button>
+                                    <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${p.id})">Eliminar</button>
                                 </td>
                             </tr>
                         `;
@@ -364,7 +364,7 @@
             })
             .then(res => res.json())
             .then(result => {
-                alert(productId ? '✅ Producto actualizado' : '✅ Producto creado');
+                alert(productId ? 'Producto actualizado' : 'Producto creado');
                 limpiarFormulario();
                 verificarAdminYCargar();
             })
@@ -397,7 +397,7 @@
                 headers: { 'Authorization': 'Bearer ' + token }
             })
             .then(() => {
-                alert('✅ Producto eliminado');
+                alert('Producto eliminado');
                 verificarAdminYCargar();
             })
             .catch(e => alert('Error: ' + e));
@@ -418,7 +418,6 @@
 
 
 
-</html></body>    <script src="js/main.js"></script>    <script src="js/auth-topbar.js"></script>
-    <script src="js/admin-guard.js"></script>
+</html></body>    <script src="js/main.js"></script>    <script src="js/auth-topbar.js"></script>    <script src="js/admin-guard.js"></script>
 </body>
 </html>

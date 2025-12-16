@@ -32,7 +32,7 @@
             padding-top: 15px;
         }
         .detail-section { margin-bottom: 20px; }
-        .detail-label { font-weight: bold; color: #F96D00; }
+        .detail-label { font-weight: bold; color: #465926; }
         .chevron-icon { transition: transform 0.3s ease; }
         .chevron-icon.rotated { transform: rotate(180deg); }
     </style>
@@ -40,10 +40,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="index.html">Tienda de <span style="color: #F96D00;">Licores</span></a>
+            <a class="navbar-brand" href="index.html">Licor<span style="color: #ffae0d;">&Co.</span></a>
             <div class="ml-auto">
-                <a href="admin-products.html" class="btn btn-outline-light mr-2">📦 Gestionar Productos</a>
-                <button class="btn btn-outline-light" onclick="logout()">🚪 Salir</button>
+                <a href="admin-products.html" class="btn btn-outline-light mr-2">Gestionar Productos</a>
+                <button class="btn btn-outline-light" onclick="logout()">Salir</button>
             </div>
         </div>
     </nav>
@@ -51,13 +51,13 @@
     <div class="container container-admin">
         <!-- Pedidos Pendientes -->
         <div class="mb-5">
-            <h3>⏳ Pedidos Pendientes</h3>
+            <h3>Pedidos Pendientes</h3>
             <div id="pendingOrders"></div>
         </div>
 
         <!-- Pedidos Completados -->
         <div class="mb-5">
-            <h3>✅ Pedidos Completados</h3>
+            <h3>Pedidos Completados</h3>
             <div id="completedOrders"></div>
         </div>
     </div>
@@ -108,26 +108,26 @@
 
                     <div class="order-details">
                         <div class="detail-section">
-                            <div class="detail-label">👤 Información del Cliente</div>
+                            <div class="detail-label">Información del Cliente</div>
                             <p><strong>Nombre:</strong> ${order.firstname} ${order.lastname}</p>
                             <p><strong>Email:</strong> ${order.emailaddress}</p>
                             <p><strong>Teléfono:</strong> ${order.phone}</p>
                         </div>
 
                         <div class="detail-section">
-                            <div class="detail-label">📍 Detalles de Envío</div>
+                            <div class="detail-label">Detalles de Envío</div>
                             <p><strong>Dirección:</strong> ${order.streetaddress} ${order.apartment || ''}</p>
                             <p><strong>Departamento:</strong> ${order.department}</p>
                             <p><strong>Código Postal:</strong> ${order.postcodezip}</p>
                         </div>
 
                         <div class="detail-section">
-                            <div class="detail-label">💳 Método de Pago</div>
+                            <div class="detail-label">Método de Pago</div>
                             <p>${order.paymentMethod}</p>
                         </div>
 
                         <div class="detail-section">
-                            <div class="detail-label">📦 Productos Comprados</div>
+                            <div class="detail-label">Productos Comprados</div>
                             <div class="table-responsive">
                                 <table class="table table-sm">
                                     <thead>
@@ -154,9 +154,9 @@
 
                         <div class="detail-section">
                             ${order.estado === 'PENDIENTE' ? `
-                                <button class="btn btn-sm btn-success" onclick="cambiarEstado(${order.id}, 'COMPLETADA')">✅ Marcar como Completada</button>
+                                <button class="btn btn-sm btn-success" onclick="cambiarEstado(${order.id}, 'COMPLETADA')">Marcar como Completada</button>
                             ` : ''}
-                            <button class="btn btn-sm btn-danger" onclick="eliminarOrden(${order.id})">🗑️ Eliminar</button>
+                            <button class="btn btn-sm btn-danger" onclick="eliminarOrden(${order.id})">Eliminar</button>
                         </div>
 
                         <small class="text-muted">

@@ -34,32 +34,32 @@ public class AdminProductController {
     private ProductService productService;
 
     private ResponseEntity<?> verificarAdmin(Authentication authentication) {
-        logger.info("🔐 VERIFICANDO PERMISOS ADMIN");
+        logger.info("Verificando permisos admin");
         
         if (authentication == null) {
-            logger.error("❌ No hay autenticación");
+            logger.error("No hay autenticación");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("{\"message\": \"No autenticado\"}");
         }
 
         if (!authentication.isAuthenticated()) {
-            logger.error("❌ Usuario no autenticado");
+            logger.error("Usuario no autenticado");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("{\"message\": \"Usuario no autenticado\"}");
         }
 
         User user = (User) authentication.getPrincipal();
-        logger.info("👤 Usuario: {}", user.getEmail());
-        logger.info("🛡️  Rol: {}", user.getRole());
+        logger.info("Usuario: {}", user.getEmail());
+        logger.info("Rol: {}", user.getRole());
 
         if (user.getRole() != User.Role.ADMIN) {
-            logger.warn("⛔ ACCESO DENEGADO - Usuario no es ADMIN");
+            logger.warn("Acceso denegado - Usuario no es ADMIN");
             logger.warn("   Rol actual: {}", user.getRole());
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("{\"message\": \"Acceso denegado. Solo admins pueden acceder.\"}");
         }
 
-        logger.info("✅ ACCESO PERMITIDO - Usuario es ADMIN");
+        logger.info("Acceso permitido - Usuario es ADMIN");
         return null;
     }
 
@@ -69,9 +69,9 @@ public class AdminProductController {
         if (adminCheck != null) return adminCheck;
 
         try {
-            logger.info("📝 Creando nuevo producto: {}", productDTO.getNombre());
+            logger.info("Creando nuevo producto: {}", productDTO.getNombre());
             Product product = productService.createProduct(productDTO);
-            logger.info("✅ Producto creado exitosamente con ID: {}", product.getId());
+            logger.info("Producto creado exitosamente con ID: {}", product.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(product);
         } catch (Exception e) {
             logger.error("❌ Error al crear producto: ", e);
@@ -86,9 +86,9 @@ public class AdminProductController {
         if (adminCheck != null) return adminCheck;
 
         try {
-            logger.info("📝 Actualizando producto ID: {}", productId);
+            logger.info("Actualizando producto ID: {}", productId);
             Product product = productService.updateProduct(productId, productDTO);
-            logger.info("✅ Producto actualizado exitosamente");
+            logger.info("Producto actualizado exitosamente");
             return ResponseEntity.ok(product);
         } catch (Exception e) {
             logger.error("❌ Error al actualizar producto: ", e);
@@ -104,9 +104,9 @@ public class AdminProductController {
 
         try {
             Double newPrice = request.get("precio");
-            logger.info("💰 Actualizando precio del producto ID: {} a ${}", productId, newPrice);
+            logger.info("Actualizando precio del producto ID: {} a ${}", productId, newPrice);
             Product product = productService.updateProductPrice(productId, newPrice);
-            logger.info("✅ Precio actualizado exitosamente");
+            logger.info("Precio actualizado exitosamente");
             return ResponseEntity.ok(product);
         } catch (Exception e) {
             logger.error("❌ Error al actualizar precio: ", e);
@@ -119,9 +119,9 @@ public class AdminProductController {
     public ResponseEntity<?> getAllProducts() {
         // GET sin autenticación requerida
         try {
-            logger.info("📦 Obteniendo todos los productos");
+            logger.info("Obteniendo todos los productos");
             List<Product> products = productService.getAllProducts();
-            logger.info("✅ Se obtuvieron {} productos", products.size());
+            logger.info("Se obtuvieron {} productos", products.size());
             return ResponseEntity.ok(products);
         } catch (Exception e) {
             logger.error("❌ Error al obtener productos: ", e);
@@ -133,7 +133,7 @@ public class AdminProductController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductById(@PathVariable Long id) {
         try {
-            logger.info("📦 Obteniendo producto ID: {}", id);
+            logger.info("Obteniendo producto ID: {}", id);
             Product product = productService.getAllProducts().stream()
                 .filter(p -> p.getId().equals(id))
                 .findFirst()
@@ -158,9 +158,9 @@ public class AdminProductController {
         if (adminCheck != null) return adminCheck;
 
         try {
-            logger.info("🗑️ Eliminando producto ID: {}", productId);
+            logger.info("Eliminando producto ID: {}", productId);
             productService.deleteProduct(productId);
-            logger.info("✅ Producto eliminado exitosamente");
+            logger.info("Producto eliminado exitosamente");
             return ResponseEntity.ok("{\"message\": \"Producto eliminado\"}");
         } catch (Exception e) {
             logger.error("❌ Error al eliminar producto: ", e);
